@@ -21,6 +21,11 @@ mod types;
 
 pub mod config;
 
+#[cfg(feature = "sse")]
+pub mod sse;
+#[cfg(feature = "ws")]
+pub mod ws;
+
 pub use context::Context;
 pub use extract::Extract;
 pub use guard::{into_guard, Guard};
