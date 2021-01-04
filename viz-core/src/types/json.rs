@@ -4,7 +4,7 @@ use std::{
 };
 
 use bytes::buf::BufExt;
-use serde::de::DeserializeOwned;
+use serde::{de::DeserializeOwned, Serialize, Serializer};
 
 use viz_utils::{futures::future::BoxFuture, log, serde::json};
 
@@ -51,6 +51,18 @@ impl ContextExt for Context {
 
 /// Json Extractor
 pub struct Json<T>(pub T);
+
+impl<T> Serialize for Json<T>
+where
+    T: Serialize,
+{
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        T::serialize(self, serializer)
+    }
+}
 
 impl<T> Json<T> {
     /// Deconstruct to an inner value
