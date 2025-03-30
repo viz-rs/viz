@@ -10,7 +10,7 @@ pub trait IntoResponse: Sized {
 
     /// Convert self to the [`Error`].
     fn into_error(self) -> Error {
-        Error::Responder(self.into_response())
+        Error::Responder(Box::new(self.into_response()))
     }
 }
 
@@ -34,7 +34,7 @@ impl IntoResponse for Error {
                 *resp.status_mut() = StatusCode::INTERNAL_SERVER_ERROR;
                 resp
             }
-            Self::Responder(resp) | Self::Report(_, resp) => resp,
+            Self::Responder(resp) | Self::Report(_, resp) => *resp,
         }
     }
 }
