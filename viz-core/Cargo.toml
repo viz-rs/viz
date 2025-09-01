@@ -88,7 +88,6 @@ async-compression = { version = "0.4", features = [
   "brotli",
   "deflate",
 ], optional = true }
-
 # Tokio
 tokio = { workspace = true, optional = true }
 tokio-tungstenite = { workspace = true, optional = true }
