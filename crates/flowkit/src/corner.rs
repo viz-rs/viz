@@ -167,7 +167,7 @@ impl CornerPathParams {
             let ctrl1 = p0 + Vec2::new(a, 0.0) * x;
             let ctrl2 = p0 + Vec2::new(a + b, 0.0) * x;
             let to0 = p0 + Vec2::new(a + b + c, d) * x;
-            (p0, ctrl1, ctrl2, to0)
+            [p0, ctrl1, ctrl2, to0]
         };
         // vertical direction
         let mut v = {
@@ -175,14 +175,15 @@ impl CornerPathParams {
             let ctrl1 = p0 + Vec2::new(0.0, a) * y;
             let ctrl2 = p0 + Vec2::new(0.0, a + b) * y;
             let to0 = p0 + Vec2::new(d, a + b + c) * y;
-            (p0, ctrl1, ctrl2, to0)
+            [p0, ctrl1, ctrl2, to0]
         };
 
         if should_swap {
             ::core::mem::swap(&mut h, &mut v);
         }
 
-        let ((_, ctrl1, ctrl2, to0), (to1, ctrl4, ctrl3, _)) = (h, v);
+        let [_, ctrl1, ctrl2, to0] = h;
+        let [to1, ctrl4, ctrl3, _] = v;
 
         [
             // Action::LineTo(p0),
