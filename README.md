@@ -14,7 +14,7 @@ Viz is a visual creative space.
 
 ## Examples
 
-* [node based](examples/node_based): A node-based UI example for Bevy Engine.
+* [node based](examples/bevy/src/node_based.rs): A node-based UI example for Bevy Engine.
 
   ```console
   cargo run --example node_based
