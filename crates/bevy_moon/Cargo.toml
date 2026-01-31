@@ -1,0 +1,78 @@
+[package]
+name = "bevy_moon"
+description = "A world space UI for Bevy Engine"
+keywords = ["bevy", "moon", "ui"]
+authors.workspace = true
+edition.workspace = true
+homepage.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+# bevy
+bevy_a11y = { workspace = true }
+bevy_app = { workspace = true }
+bevy_asset = { workspace = true }
+bevy_camera = { workspace = true }
+bevy_camera_controller = { workspace = true, optional = true }
+bevy_color = { workspace = true }
+bevy_core_pipeline = { workspace = true }
+bevy_derive = { workspace = true }
+bevy_ecs = { workspace = true }
+bevy_image = { workspace = true }
+bevy_input = { workspace = true }
+bevy_math = { workspace = true }
+bevy_pbr = { workspace = true }
+bevy_mesh = { workspace = true }
+bevy_reflect = { workspace = true }
+bevy_render = { workspace = true }
+bevy_shader = { workspace = true }
+bevy_sprite = { workspace = true }
+bevy_sprite_render = { workspace = true }
+bevy_text = { workspace = true }
+bevy_picking = { workspace = true, optional = true }
+bevy_transform = { workspace = true }
+bevy_window = { workspace = true }
+bevy_utils = { workspace = true }
+bevy_platform = { workspace = true }
+
+# other
+bitflags = { workspace = true }
+dyn-clone = { workspace = true }
+fixedbitset = { workspace = true }
+radsort = { workspace = true }
+smallvec = { workspace = true }
+stacksafe = { workspace = true }
+
+accesskit = { workspace = true }
+bytemuck = { workspace = true }
+derive_more = { workspace = true }
+serde = { workspace = true, optional = true }
+taffy = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+uuid = { workspace = true, optional = true }
+
+[dev-dependencies]
+bevy_core_pipeline = { workspace = true }
+
+[features]
+default = ["picking"]
+serialize = [
+  "serde",
+  "smallvec/serde",
+  "bevy_math/serialize",
+  "bevy_platform/serialize",
+]
+picking = ["dep:bevy_picking", "dep:uuid"]
+pan = ["bevy_camera_controller/pan_camera"]
+
+# Experimental features
+ghost_nodes = []
+
+[lints]
+workspace = true
+
+[package.metadata.docs.rs]
+rustdoc-args = ["-Zunstable-options", "--generate-link-to-definition"]
+all-features = true

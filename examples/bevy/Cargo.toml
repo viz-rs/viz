@@ -1,0 +1,35 @@
+[package]
+name = "bevy_examples"
+publish = false
+edition.workspace = true
+
+[dependencies]
+bevy = { version = "0.18.0", default-features = true, features = ["pan_camera"] }
+
+bevy_flowkit.workspace = true
+bevy_moon.workspace = true
+
+# graph
+bevy_prototype_lyon.workspace = true
+petgraph.workspace = true
+
+bevy_pancam.workspace = true
+
+taffy.workspace = true
+tracing = { workspace = true }
+
+[[example]]
+name = "overflow"
+path = "src/overflow.rs"
+
+[[example]]
+name = "overflow_debug"
+path = "src/overflow_debug.rs"
+
+[[example]]
+name = "text"
+path = "src/text.rs"
+
+[[example]]
+name = "node_based"
+path = "src/node_based.rs"

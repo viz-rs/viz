@@ -1,0 +1,118 @@
+[workspace]
+resolver = "3"
+members = [
+  "crates/*",
+  "examples/*",
+]
+
+[workspace.package]
+authors = ["Fangdun Tsai <fundon@pindash.io>"]
+categories = ["game-engines", "graphics", "gui", "rendering"]
+description = "A visual creative space"
+edition = "2024"
+homepage = "https://viz.org"
+keywords = ["bevy", "viz", "moon"]
+license = "MIT OR Apache-2.0"
+publish = false
+repository = "https://github.com/viz-rs/viz"
+version = "0.1.0"
+
+[workspace.dependencies]
+flowkit = { path = "crates/flowkit" }
+
+bevy_flowkit = { path = "crates/bevy_flowkit" }
+bevy_moon = { path = "crates/bevy_moon" }
+
+# bevy
+bevy_a11y = { version = "0.18.0" }
+bevy_app = { version = "0.18.0" }
+bevy_asset = { version = "0.18.0" }
+bevy_camera = { version = "0.18.0" }
+bevy_camera_controller = { version = "0.18.0", default-features = false }
+bevy_color = { version = "0.18.0" }
+bevy_core_pipeline = { version = "0.18.0" }
+bevy_derive = { version = "0.18.0" }
+bevy_ecs = { version = "0.18.0" }
+bevy_image = { version = "0.18.0" }
+bevy_input = { version = "0.18.0" }
+bevy_input_focus = { version = "0.18.0" }
+bevy_log = { version = "0.18.0" }
+bevy_math = { version = "0.18.0" }
+bevy_mesh = { version = "0.18.0" }
+bevy_pbr = { version = "0.18.0" }
+bevy_platform = { version = "0.18.0", default-features = false }
+bevy_picking = { version = "0.18.0" }
+bevy_reflect = { version = "0.18.0" }
+bevy_shader = { version = "0.18.0" }
+bevy_render = { version = "0.18.0" }
+bevy_sprite = { version = "0.18.0" }
+bevy_sprite_render = { version = "0.18.0", features = ["bevy_text"] }
+bevy_text = { version = "0.18.0" }
+bevy_transform = { version = "0.18.0" }
+bevy_utils = { version = "0.18.0" }
+bevy_window = { version = "0.18.0" }
+
+# other
+bitflags = "2.0"
+dyn-clone = "1.0"
+fixedbitset = { version = "0.5", default-features = false }
+radsort = "0.1"
+smallvec = { version = "1.0", features = ["union", "const_new"] }
+stacksafe = "1.0"
+taffy = "0.9"
+glam = "0.30"
+
+accesskit = "0.21"
+bytemuck = { version = "1.5", features = ["derive"] }
+derive_more = { version = "2", default-features = false, features = ["from"] }
+serde = { version = "1", features = ["derive"] }
+thiserror = { version = "2", default-features = false }
+tracing = { version = "0.1", default-features = false, features = ["std"] }
+uuid = { version = "1.1", features = ["v4"] }
+
+bevy_pancam = "0.20.0"
+bevy_prototype_lyon = "0.16.0"
+petgraph = { version = "0.8.3", default-features = false }
+
+[workspace.lints]
+
+[profile]
+
+# Enable a small amount of optimization in the dev profile.
+[profile.dev]
+opt-level = 1
+debug = false
+
+# Enable a large amount of optimization in the dev profile for dependencies.
+[profile.dev.package."*"]
+opt-level = 3
+
+[profile.dev.build-override]
+opt-level = 3
+
+# Enable more optimization in the release profile at the cost of compile time.
+[profile.release]
+# good for profilers
+# debug = true
+# This leads to better optimizations and smaller binaries (and is the default in Wasm anyways).
+panic = "abort"
+# Compile the entire crate as one unit.
+# Slows compile times, marginal improvements.
+codegen-units = 1
+# Do a second optimization pass over the entire program, including dependencies.
+# Slows compile times, marginal improvements.
+lto = "thin"
+
+# Optimize for size in the web-release profile to reduce load times and bandwidth usage on web.
+[profile.web-release]
+# Removes panic handling code.
+panic = 'abort'
+# Default to release profile values.
+inherits = "release"
+# Optimize with size in mind (also try "z", sometimes it is better).
+# Slightly slows compile times, great improvements to file size and runtime performance.
+opt-level = "z"
+# Strip all debugging information from the binary to slightly reduce file size.
+strip = "debuginfo"
+lto = true
+codegen-units = 1
