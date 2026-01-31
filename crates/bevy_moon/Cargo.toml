@@ -2,6 +2,7 @@
 name = "bevy_moon"
 description = "A world space UI for Bevy Engine"
 keywords = ["bevy", "moon", "ui"]
+version.workspace = true
 authors.workspace = true
 edition.workspace = true
 homepage.workspace = true
