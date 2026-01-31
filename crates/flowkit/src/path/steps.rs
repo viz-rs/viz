@@ -27,13 +27,12 @@ impl StepsBuilder {
         );
         let new_area = visible_area(new_rect_min, new_rect_max);
 
-        let is_same_area = area == new_area;
-
         let center = new_rect_min.midpoint(new_rect_max);
 
         let edges = source_edge_vec2 * target_edge_vec2;
         let is_adjacent_edge = edges == Vec2::ZERO;
         let is_same_edge = !is_adjacent_edge && edges.cmpeq(Vec2::ONE).any();
+        let is_same_area = area == new_area;
 
         let mut points = Vec::with_capacity(3);
 

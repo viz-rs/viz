@@ -182,8 +182,8 @@ impl CornerPathParams {
             ::core::mem::swap(&mut h, &mut v);
         }
 
-        let [_, ctrl1, ctrl2, to0] = h;
-        let [to1, ctrl4, ctrl3, _] = v;
+        let [_p0, ctrl1, ctrl2, to0] = h;
+        let [to1, ctrl4, ctrl3, _p1] = v;
 
         [
             // Action::LineTo(p0),
