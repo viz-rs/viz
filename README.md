@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/viz-rs/viz-rs.github.io/gh-pages/logo.svg" height="200" />
+  <img src="https://raw.githubusercontent.com/viz-rs/viz/main/assets/branding/logo.svg" height="200" />
 </p>
 
 ## What is Viz?
@@ -11,6 +11,14 @@ Viz is a visual creative space.
 * [Flowkit](crates/flowkit): A universal UI workflow tool library..
 * [Bevy Flowkit](crates/bevy_flowkit): A UI workflow tool library for Bevy Engine.
 * [Bevy Moon](crates/bevy_moon): A world space UI for Bevy Engine.
+
+## Examples
+
+* [node based](examples/node_based): A node-based UI example for Bevy Engine.
+
+  ```console
+  cargo run --example node_based
+  ```
 
 ## License
 
