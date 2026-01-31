@@ -7,6 +7,6 @@
 
 A world space UI for Bevy Engine.
 
-> Note: most of the code is inspired by the [Bevy UI] crate.
+> Note: It is inspired by the [Bevy UI] crate.
 
 [Bevy UI]: https://docs.rs/bevy_ui/

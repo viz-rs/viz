@@ -5,4 +5,4 @@
 [![Downloads](https://img.shields.io/crates/d/bevy_flowkit.svg)](https://crates.io/crates/bevy_flowkit)
 [![Docs](https://docs.rs/bevy_flowkit/badge.svg)](https://docs.rs/bevy_flowkit/latest/bevy_flowkit/)
 
-A UI workflow tool library for Bevy Engine
+A UI workflow tool library for Bevy Engine.

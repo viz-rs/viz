@@ -8,7 +8,7 @@ Viz is a visual creative space.
 
 ## Libraries
 
-* [Flowkit](crates/flowkit): A universal UI workflow tool library..
+* [Flowkit](crates/flowkit): A universal UI workflow tool library.
 * [Bevy Flowkit](crates/bevy_flowkit): A UI workflow tool library for Bevy Engine.
 * [Bevy Moon](crates/bevy_moon): A world space UI for Bevy Engine.
 
