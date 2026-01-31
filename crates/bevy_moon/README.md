@@ -6,3 +6,7 @@
 [![Docs](https://docs.rs/bevy_moon/badge.svg)](https://docs.rs/bevy_moon/latest/bevy_moon/)
 
 A world space UI for Bevy Engine.
+
+> Note: most of the code is inspired by the [Bevy UI] crate.
+
+[Bevy UI]: https://docs.rs/bevy_ui/

@@ -20,6 +20,18 @@ Viz is a visual creative space.
   cargo run --example node_based
   ```
 
+* overflow: Overflow examples for Bevy Engine.
+
+  ```console
+  cargo run --example overflow
+  cargo run --example overflow_debug
+  ```
+* [text](examples/bevy/src/text.rs): A text UI example for Bevy Engine.
+
+  ```console
+  cargo run --example text
+  ```
+
 ## License
 
 Viz is free, open source and permissively licensed!
