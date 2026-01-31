@@ -1,6 +1,6 @@
 [package]
 name = "flowkit"
-description = "A universal UI workflow tool library"
+description = "A universal UI workflow library"
 keywords = ["viz", "ui", "workflow", "flow"]
 version = "0.1.0"
 authors.workspace = true
