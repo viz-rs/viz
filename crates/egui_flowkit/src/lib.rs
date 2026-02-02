@@ -11,7 +11,7 @@ use lyon_path::{BuilderImpl, Event};
 pub use lyon_tessellation::StrokeOptions;
 
 use crate::{
-    mesh::{Mode, Tessellator, build_mesh},
+    mesh::{Mode, Tessellator},
     vertex::VertexBuffers,
 };
 
@@ -149,7 +149,7 @@ impl EdgePath {
 
         tess.stroke(&path, mode, &mut buffers);
 
-        let mesh = build_mesh(buffers);
+        let mesh = Tessellator::build_mesh(buffers);
         Shape::mesh(::std::sync::Arc::new(mesh))
     }
 }

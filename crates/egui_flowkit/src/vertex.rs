@@ -11,8 +11,7 @@ type IndexType = u32;
 /// Lyon's [`VertexBuffers`] generic data type defined for [`Vertex`].
 pub type VertexBuffers = tess::VertexBuffers<Vertex, IndexType>;
 
-/// Zero-sized type used to implement various vertex construction traits from
-/// Lyon.
+/// Zero-sized type used to implement various vertex construction traits from Lyon.
 pub struct VertexConstructor {
     pub color: Color32,
 }

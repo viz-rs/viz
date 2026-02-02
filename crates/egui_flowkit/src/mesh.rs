@@ -47,12 +47,12 @@ impl Tessellator {
             tracing::error!("StrokeTessellator error: {:?}", e);
         }
     }
-}
 
-pub fn build_mesh(buffers: VertexBuffers) -> Mesh {
-    Mesh {
-        indices: buffers.indices,
-        vertices: buffers.vertices,
-        texture_id: TextureId::default(),
+    pub fn build_mesh(buffers: VertexBuffers) -> Mesh {
+        Mesh {
+            indices: buffers.indices,
+            vertices: buffers.vertices,
+            texture_id: TextureId::default(),
+        }
     }
 }
