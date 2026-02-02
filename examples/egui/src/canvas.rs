@@ -1,0 +1,281 @@
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
+#![expect(rustdoc::missing_crate_level_docs)] // it's an example
+
+use eframe::egui;
+use egui::{
+    Color32, Frame, Grid, Pos2, Rect, Sense, Shape, Stroke, StrokeKind, Ui, Vec2, Widget as _,
+    emath, epaint::RectShape, pos2,
+};
+
+use egui_flowkit::{
+    EdgePath, StrokeOptions,
+    mesh::{Mode, Tessellator},
+    prelude::{EdgePosition, EdgeType},
+};
+
+const CURVATURE: f32 = 0.25;
+const OFFSET: f32 = 25.0;
+
+struct Edge {
+    source_id: usize,
+    target_id: usize,
+    source: (Vec2, EdgePosition),
+    target: (Vec2, EdgePosition),
+    edge_type: EdgeType,
+}
+
+fn main() -> eframe::Result {
+    env_logger::init(); // Log to stderr (if you run with `RUST_LOG=debug`).
+    let options = eframe::NativeOptions {
+        viewport: egui::ViewportBuilder::default()
+            .with_inner_size([400.0, 300.0])
+            .with_min_inner_size([300.0, 220.0]),
+        // multisampling to for anti-aliasing on lyon generated meshes
+        multisampling: 4,
+        ..Default::default()
+    };
+
+    eframe::run_native(
+        "My flowkit App",
+        options,
+        Box::new(|_cc| Ok(Box::<MyApp>::default())),
+    )
+}
+
+struct MyApp {
+    paint_bezier: PaintBezier,
+}
+
+impl Default for MyApp {
+    fn default() -> Self {
+        Self {
+            paint_bezier: PaintBezier::default(),
+        }
+    }
+}
+
+impl eframe::App for MyApp {
+    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        egui::CentralPanel::default().show(ctx, |ui| {
+            self.paint_bezier.ui(ui);
+        });
+    }
+}
+
+pub struct PaintBezier {
+    shapes: [Pos2; 4],
+
+    edges: [Edge; 4],
+
+    /// Stroke for Bézier curve.
+    stroke: Stroke,
+
+    /// Fill for Bézier curve.
+    fill: Color32,
+
+    tess: Tessellator,
+
+    mesh: bool,
+}
+
+impl Default for PaintBezier {
+    fn default() -> Self {
+        Self {
+            shapes: [
+                pos2(50.0, 50.0),
+                pos2(60.0, 250.0),
+                pos2(200.0, 200.0),
+                pos2(250.0, 50.0),
+            ],
+            edges: [
+                Edge {
+                    source_id: 0,
+                    target_id: 1,
+                    source: (
+                        Vec2::new(0.5, 0.0) * Vec2::new(50.0, 50.0),
+                        EdgePosition::Right,
+                    ),
+                    target: (
+                        Vec2::new(-0.5, 0.0) * Vec2::new(50.0, 50.0),
+                        EdgePosition::Left,
+                    ),
+                    edge_type: EdgeType::Straight,
+                },
+                Edge {
+                    source_id: 0,
+                    target_id: 2,
+                    source: (
+                        Vec2::new(0.5, 0.0) * Vec2::new(50.0, 50.0),
+                        EdgePosition::Right,
+                    ),
+                    target: (
+                        Vec2::new(-0.5, 0.0) * Vec2::new(50.0, 50.0),
+                        EdgePosition::Left,
+                    ),
+                    edge_type: EdgeType::Curve,
+                },
+                Edge {
+                    source_id: 0,
+                    target_id: 3,
+                    source: (
+                        Vec2::new(0.5, 0.0) * Vec2::new(50.0, 50.0),
+                        EdgePosition::Right,
+                    ),
+                    target: (
+                        Vec2::new(0.0, -0.5) * Vec2::new(50.0, 50.0),
+                        EdgePosition::Bottom,
+                    ),
+                    edge_type: EdgeType::StraightStep,
+                },
+                Edge {
+                    source_id: 1,
+                    target_id: 2,
+                    source: (
+                        Vec2::new(0.5, 0.0) * Vec2::new(50.0, 50.0),
+                        EdgePosition::Right,
+                    ),
+                    target: (
+                        Vec2::new(0.0, -0.5) * Vec2::new(50.0, 50.0),
+                        EdgePosition::Bottom,
+                    ),
+                    edge_type: EdgeType::SmoothStep,
+                },
+            ],
+            stroke: Stroke::new(1.0, Color32::from_rgb(25, 200, 100)),
+            fill: Color32::from_rgb(50, 100, 150).linear_multiply(0.25),
+
+            tess: Tessellator::default(),
+            mesh: false,
+        }
+    }
+}
+
+impl PaintBezier {
+    pub fn ui(&mut self, ui: &mut Ui) {
+        self.ui_control(ui);
+
+        Frame::canvas(ui.style()).show(ui, |ui| {
+            self.ui_content(ui);
+        });
+    }
+
+    pub fn ui_control(&mut self, ui: &mut egui::Ui) {
+        ui.label("Mesh shape");
+        ui.checkbox(&mut self.mesh, "uses lyon to create mesh");
+        ui.end_row();
+
+        ui.collapsing("Colors", |ui| {
+            Grid::new("colors")
+                .num_columns(2)
+                .spacing([12.0, 8.0])
+                .striped(true)
+                .show(ui, |ui| {
+                    ui.label("Fill color");
+                    ui.color_edit_button_srgba(&mut self.fill);
+                    ui.end_row();
+
+                    ui.label("Stroke options");
+                    ui.add(&mut self.stroke);
+                    ui.end_row();
+                });
+        });
+
+        ui.collapsing("Global tessellation options", |ui| {
+            let mut tessellation_options = ui.ctx().tessellation_options(|to| *to);
+            tessellation_options.ui(ui);
+            ui.ctx()
+                .tessellation_options_mut(|to| *to = tessellation_options);
+        });
+
+        ui.label("Move the points by dragging them.");
+        ui.label("Tessellation options doesn't work in lyon.");
+    }
+
+    pub fn ui_content(&mut self, ui: &mut Ui) -> egui::Response {
+        let (response, painter) =
+            ui.allocate_painter(Vec2::new(ui.available_width(), 300.0), Sense::hover());
+
+        let to_screen = emath::RectTransform::from_to(
+            Rect::from_min_size(Pos2::ZERO, response.rect.size()),
+            response.rect,
+        );
+
+        let shapes: Vec<Shape> = self
+            .shapes
+            .iter_mut()
+            .enumerate()
+            // .take(self.degree)
+            .map(|(i, point)| {
+                let size = Vec2::splat(50.0);
+
+                let point_in_screen = to_screen.transform_pos(*point);
+                let point_rect = Rect::from_center_size(point_in_screen, size);
+                let point_id = response.id.with(i);
+                let point_response = ui.interact(point_rect, point_id, Sense::drag());
+
+                *point += point_response.drag_delta();
+                *point = to_screen.from().clamp(*point);
+
+                let point_in_screen = to_screen.transform_pos(*point);
+                let point_rect = Rect::from_center_size(point_in_screen, size);
+                let stroke = ui.style().interact(&point_response).fg_stroke;
+
+                Shape::Rect(RectShape::new(
+                    point_rect,
+                    8.0,
+                    self.fill,
+                    stroke,
+                    StrokeKind::Middle,
+                ))
+            })
+            .collect();
+
+        let paths = self
+            .edges
+            .iter_mut()
+            .map(|edge| {
+                let &mut Edge {
+                    source_id,
+                    target_id,
+                    source,
+                    target,
+                    edge_type,
+                } = edge;
+
+                let source_translation = self.shapes[source_id];
+                let target_translation = self.shapes[target_id];
+
+                let (source_offset, source_edge_pos) = source;
+                let (target_offset, target_edge_pos) = target;
+
+                let source_pos = to_screen.transform_pos(source_translation + source_offset);
+                let target_pos = to_screen.transform_pos(target_translation + target_offset);
+
+                let edge_path = EdgePath {
+                    source: (glam::Vec2::new(source_pos.x, source_pos.y), source_edge_pos),
+                    target: (glam::Vec2::new(target_pos.x, target_pos.y), target_edge_pos),
+                    edge_type,
+                    curvature: CURVATURE,
+                    offset: OFFSET,
+                };
+
+                if self.mesh {
+                    edge_path.build_with(
+                        Mode {
+                            color: self.stroke.color,
+                            options: StrokeOptions::DEFAULT.with_line_width(self.stroke.width),
+                        },
+                        &mut self.tess,
+                    )
+                } else {
+                    edge_path.build(self.stroke)
+                }
+            })
+            .collect::<Vec<_>>();
+
+        painter.extend(paths);
+        painter.extend(shapes);
+
+        response
+    }
+}

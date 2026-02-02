@@ -32,6 +32,12 @@ Viz is a visual creative space.
   cargo run --example text
   ```
 
+* [egui canvas](examples/egui/src/canvas.rs): A simple flow chat for egui.
+
+  ```console
+  cargo run --example egui_canvas
+  ```
+
 ## License
 
 Viz is free, open source and permissively licensed!

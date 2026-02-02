@@ -16,6 +16,7 @@ impl WindingOrder {
     /// Calculates the winding order based on the previous, current, and next points.
     ///
     /// <https://en.wikipedia.org/wiki/Curve_orientation>
+    #[inline]
     pub fn calculate(prev: Vec2, current: Vec2, next: Vec2) -> Self {
         let area = (current - prev).perp_dot(next - prev);
 
@@ -33,6 +34,7 @@ impl WindingOrder {
     /// If the winding order is `CounterClockwise`, returns `1.0`.
     /// If the winding order is `Clockwise`, returns `-1.0`.
     /// If the winding order is `Invalid`, returns `0.0`.
+    #[inline]
     pub const fn as_f32(self) -> f32 {
         match self {
             Self::CounterClockwise => 1.0,

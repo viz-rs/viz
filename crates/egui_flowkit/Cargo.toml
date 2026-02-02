@@ -15,5 +15,11 @@ default = []
 [dependencies]
 flowkit = { path = "../flowkit", version = "0.1.0" }
 
+egui.workspace = true
+glam.workspace = true
+lyon_path.workspace = true
+lyon_tessellation.workspace = true
+tracing.workspace = true
+
 [lints]
 workspace = true

@@ -12,6 +12,7 @@ pub enum EdgePosition {
 
 impl EdgePosition {
     /// Casts an edge position to a vector.
+    #[inline]
     pub const fn as_vec2(&self) -> Vec2 {
         match self {
             Self::Top => Vec2::Y,

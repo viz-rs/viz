@@ -1,8 +1,9 @@
 use std::ops::Sub;
 
 use glam::Vec2;
+use lyon_path::{BuilderImpl, builder::WithSvg, math::Angle};
 
-use crate::{action::Action, winding_order::WindingOrder};
+use crate::{utils::Convert, winding_order::WindingOrder};
 
 /// Identifies a corner of a rectangle.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -31,6 +32,7 @@ impl Corner {
 
 impl Corner {
     /// Creates a new corner from a vector.
+    #[inline]
     pub const fn new(value: Vec2) -> Self {
         match value {
             Self::TOP_RIGHT => Self::TopRight,
@@ -42,6 +44,7 @@ impl Corner {
     }
 
     /// Calculates the corner based on the previous, current, and next points.
+    #[inline]
     pub fn calculate(prev: Vec2, current: Vec2, next: Vec2) -> Self {
         let center = prev.midpoint(next);
         let sign = current.sub(center).signum();
@@ -49,6 +52,7 @@ impl Corner {
     }
 
     /// Casts a corner to a vector.
+    #[inline]
     pub const fn as_vec2(&self) -> Vec2 {
         match self {
             Self::TopRight => Self::TOP_RIGHT,
@@ -79,6 +83,7 @@ pub struct CornerPathParams {
 }
 
 impl CornerPathParams {
+    #[inline]
     pub fn new(mut corner_radius: f32, max_radius: f32, smoothness: f32) -> Self {
         // From figure 12.2 in the article
         let mut p = (1.0 + smoothness) * corner_radius;
@@ -123,12 +128,8 @@ impl CornerPathParams {
     ///
     /// Clockwise and horizontal by default.
     /// Uses the `top-right` corner as the base model.
-    pub fn squircle(
-        self,
-        current: Vec2,
-        corner: Corner,
-        winding_order: WindingOrder,
-    ) -> [Action; 3] {
+    #[inline]
+    pub fn squircle(self, current: Vec2, corner: Corner, winding_order: WindingOrder) -> Squircle {
         let Self {
             a,
             b,
@@ -182,15 +183,45 @@ impl CornerPathParams {
             ::core::mem::swap(&mut h, &mut v);
         }
 
-        let [_p0, ctrl1, ctrl2, to0] = h;
-        let [to1, ctrl4, ctrl3, _p1] = v;
+        Squircle {
+            h,
+            v,
+            center,
+            radii,
+            sweep_angle,
+        }
+    }
+}
 
-        [
-            // Action::LineTo(p0),
-            Action::CubicBezierTo(ctrl1, ctrl2, to0),
-            Action::ArcTo(center, radii, sweep_angle),
-            // Action::LineTo(p1),
-            Action::CubicBezierTo(ctrl3, ctrl4, to1),
-        ]
+#[derive(Clone, Copy)]
+pub struct Squircle {
+    pub h: [Vec2; 4],
+    pub v: [Vec2; 4],
+    pub center: Vec2,
+    pub radii: Vec2,
+    pub sweep_angle: f32,
+}
+
+impl Squircle {
+    #[inline]
+    pub fn with(self, builder: &mut WithSvg<BuilderImpl>) {
+        let Self {
+            h: [_p0, ctrl1, ctrl2, to0],
+            v: [to1, ctrl4, ctrl3, _p1],
+            center,
+            radii,
+            sweep_angle,
+        } = self;
+
+        // builder.line_to(_p0.convert());
+        builder.cubic_bezier_to(ctrl1.convert(), ctrl2.convert(), to0.convert());
+        builder.arc(
+            center.convert(),
+            radii.convert(),
+            Angle::radians(sweep_angle),
+            Angle::radians(0.0),
+        );
+        // builder.line_to(_p1.convert());
+        builder.cubic_bezier_to(ctrl3.convert(), ctrl4.convert(), to1.convert());
     }
 }

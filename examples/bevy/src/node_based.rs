@@ -10,10 +10,7 @@ use bevy::{
     prelude::*,
 };
 
-use bevy_flowkit::{
-    draw_bezier_curve_path, draw_smooth_step_path, draw_straight_path, draw_straight_step_path,
-    prelude::*,
-};
+use bevy_flowkit::{EdgePath, prelude::*};
 use bevy_prototype_lyon::{
     draw::Stroke,
     entity::Shape,
@@ -39,7 +36,7 @@ const OFFSET: f32 = 25.0;
 pub struct Edge {
     pub source_position: (Vec2, EdgePosition),
     pub target_position: (Vec2, EdgePosition),
-    pub kind: EdgeType,
+    pub edge_type: EdgeType,
     pub color: Color,
 }
 
@@ -48,7 +45,7 @@ impl Default for Edge {
         Self {
             source_position: (Vec2::ZERO, EdgePosition::Top),
             target_position: (Vec2::ZERO, EdgePosition::Bottom),
-            kind: EdgeType::Straight,
+            edge_type: EdgeType::Straight,
             color: Color::oklch(0.92, 0.0, 0.0),
         }
     }
@@ -237,7 +234,7 @@ fn setup(
         .spawn((
             Node,
             Transform::from_xyz(100.0, -300.0, 0.0),
-            Style::from_taffy(taffy::Style {
+            Style::from(taffy::Style {
                 size: taffy::Size::length(100.0),
                 border: taffy::Rect::length(2.0),
                 align_items: Some(taffy::AlignItems::Center),
@@ -250,7 +247,7 @@ fn setup(
             .box_shadow(BoxShadow::default()),
             children![(
                 Node,
-                Style::from_taffy(taffy::Style {
+                Style::from(taffy::Style {
                     size: taffy::Size::length(50.0),
                     border: taffy::Rect::length(2.0),
                     ..default()
@@ -268,7 +265,7 @@ fn setup(
         .spawn((
             Node,
             Transform::from_xyz(100.0, 130.0, 0.0),
-            Style::from_taffy(taffy::Style {
+            Style::from(taffy::Style {
                 size: taffy::Size::length(100.0),
                 border: taffy::Rect::length(2.0),
                 align_items: Some(taffy::AlignItems::Center),
@@ -281,7 +278,7 @@ fn setup(
             .box_shadow(BoxShadow::default()),
             children![(
                 Node,
-                Style::from_taffy(taffy::Style {
+                Style::from(taffy::Style {
                     size: taffy::Size::length(50.0),
                     border: taffy::Rect::length(2.0),
                     ..default()
@@ -299,7 +296,7 @@ fn setup(
         .spawn((
             Pickable::default(),
             Node,
-            Style::from_taffy(taffy::Style {
+            Style::from(taffy::Style {
                 align_content: Some(taffy::AlignContent::FlexStart),
                 size: taffy::Size::from_lengths(150.0, 150.0),
                 padding: taffy::Rect::length(10.0),
@@ -311,7 +308,7 @@ fn setup(
             .corner_radii(Corners::all(25.0)),
             Transform::from_xyz(0.0, 0.0, 0.0),
             children![(
-                Style::from_taffy(taffy::Style {
+                Style::from(taffy::Style {
                     size: taffy::Size {
                         width: taffy::Dimension::percent(1.0),
                         height: taffy::Dimension::auto(),
@@ -352,7 +349,7 @@ fn setup(
                 Vec2::new(0.0, -0.5) * Vec2::new(25.0, 25.0),
                 EdgePosition::Bottom,
             ),
-            kind: EdgeType::Curve,
+            edge_type: EdgeType::Straight,
             ..default()
         },
     );
@@ -381,7 +378,7 @@ fn setup(
                 Vec2::new(0.5, 0.25) * Vec2::new(100.0, 100.0),
                 EdgePosition::Right,
             ),
-            kind: EdgeType::StraightStep,
+            edge_type: EdgeType::StraightStep,
             ..default()
         },
     );
@@ -410,7 +407,7 @@ fn setup(
                 Vec2::new(0.0, -0.5) * Vec2::new(80.0, 100.0),
                 EdgePosition::Bottom,
             ),
-            kind: EdgeType::StraightStep,
+            edge_type: EdgeType::StraightStep,
             ..default()
         },
     );
@@ -424,7 +421,7 @@ fn setup(
                 EdgePosition::Top,
             ),
             target_position: (Vec2::new(0.0, 0.0), EdgePosition::Left),
-            kind: EdgeType::StraightStep,
+            edge_type: EdgeType::StraightStep,
             ..default()
         },
     );
@@ -441,7 +438,7 @@ fn setup(
                 Vec2::new(-0.5, 0.0) * Vec2::new(100.0, 100.0),
                 EdgePosition::Left,
             ),
-            kind: EdgeType::SmoothStep,
+            edge_type: EdgeType::SmoothStep,
             ..default()
         },
     );
@@ -459,7 +456,7 @@ fn setup(
                     Vec2::new(-0.5, 0.0) * Vec2::new(100.0, 100.0),
                     EdgePosition::Left,
                 ),
-                kind: EdgeType::SmoothStep,
+                edge_type: EdgeType::SmoothStep,
                 ..default()
             },
         ),
@@ -475,7 +472,7 @@ fn setup(
                     Vec2::new(0.0, -0.5) * Vec2::new(100.0, 100.0),
                     EdgePosition::Bottom,
                 ),
-                kind: EdgeType::Curve,
+                edge_type: EdgeType::Curve,
                 ..default()
             },
         ),
@@ -491,7 +488,7 @@ fn setup(
                     Vec2::new(-0.5, 0.0) * Vec2::new(100.0, 100.0),
                     EdgePosition::Left,
                 ),
-                kind: EdgeType::StraightStep,
+                edge_type: EdgeType::StraightStep,
                 ..default()
             },
         ),
@@ -507,7 +504,7 @@ fn setup(
                     Vec2::new(-0.5, 0.0) * Vec2::new(100.0, 100.0),
                     EdgePosition::Left,
                 ),
-                kind: EdgeType::SmoothStep,
+                edge_type: EdgeType::SmoothStep,
                 color: YELLOW_500.with_alpha(0.5).into(),
             },
         ),
@@ -523,7 +520,7 @@ fn setup(
                     Vec2::new(0.5, -0.25) * Vec2::new(100.0, 100.0),
                     EdgePosition::Right,
                 ),
-                kind: EdgeType::SmoothStep,
+                edge_type: EdgeType::SmoothStep,
                 color: STONE_500.with_alpha(0.5).into(),
             },
         ),
@@ -539,7 +536,7 @@ fn setup(
                     Vec2::new(0.5, -0.25) * Vec2::new(150.0, 150.0),
                     EdgePosition::Right,
                 ),
-                kind: EdgeType::Curve,
+                edge_type: EdgeType::Curve,
                 color: GRAY_500.with_alpha(0.5).into(),
             },
         ),
@@ -555,7 +552,7 @@ fn setup(
                     Vec2::new(-0.5, -0.25) * Vec2::new(150.0, 150.0),
                     EdgePosition::Left,
                 ),
-                kind: EdgeType::SmoothStep,
+                edge_type: EdgeType::SmoothStep,
                 color: BLUE_500.with_alpha(0.5).into(),
             },
         ),
@@ -626,44 +623,29 @@ fn draw_edges(
     for (i, (&edge_id, (edge_weight, source_transform, target_transform))) in
         changed_edges.iter().enumerate()
     {
-        let Edge {
+        let &&Edge {
             source_position,
             target_position,
-            kind,
+            edge_type,
             color,
-        } = edge_weight;
+        } = *edge_weight;
 
-        let (source_offset, source_position) = *source_position;
-        let (target_offset, target_position) = *target_position;
+        let (source_offset, source_edge_pos) = source_position;
+        let (target_offset, target_edge_pos) = target_position;
 
-        let source_point = source_transform.translation.truncate() + source_offset;
-        let target_point = target_transform.translation.truncate() + target_offset;
+        let source_pos = source_transform.translation.truncate() + source_offset;
+        let target_pos = target_transform.translation.truncate() + target_offset;
 
-        let path = match kind {
-            EdgeType::Curve => draw_bezier_curve_path(BezierCurveBuilder::new(
-                (source_point, source_position),
-                (target_point, target_position),
-                CURVATURE,
-                OFFSET,
-            )),
-            EdgeType::SmoothStep => draw_smooth_step_path(StepsBuilder::new(
-                (source_point, source_position),
-                (target_point, target_position),
-                OFFSET,
-            )),
-            EdgeType::StraightStep => draw_straight_step_path(StepsBuilder::new(
-                (source_point, source_position),
-                (target_point, target_position),
-                OFFSET,
-            )),
-            EdgeType::Straight => draw_straight_path(source_point, target_point),
+        let edge_path = EdgePath {
+            source: (source_pos, source_edge_pos),
+            target: (target_pos, target_edge_pos),
+            edge_type,
+            curvature: CURVATURE,
+            offset: OFFSET,
         };
 
-        let shape = ShapeBuilder::with(&path)
-            .stroke(Stroke {
-                color: *color,
-                ..stroke
-            })
+        let shape = ShapeBuilder::with(&edge_path)
+            .stroke(Stroke { color, ..stroke })
             .build();
 
         if let Some((mut current_shape, _)) = connections.iter_mut().find(|(_, id)| *id == edge_id)
