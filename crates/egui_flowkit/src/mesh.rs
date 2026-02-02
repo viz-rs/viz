@@ -28,12 +28,7 @@ impl Default for Tessellator {
 }
 
 impl Tessellator {
-    pub fn fill<'l>(
-        &'l mut self,
-        path: &Path,
-        mode: Mode<FillOptions>,
-        buffers: &mut VertexBuffers,
-    ) {
+    pub fn fill(&mut self, path: &Path, mode: Mode<FillOptions>, buffers: &mut VertexBuffers) {
         if let Err(e) = self.fill.tessellate_path(
             path,
             &mode.options,
