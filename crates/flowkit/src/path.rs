@@ -14,6 +14,9 @@ use crate::{
 ///
 /// If `Y` is `true`, Y-axis is up.
 /// If `Y` is `false`, Y-axis is down.
+///
+/// In Bevy world space, the Y-axis is up.
+/// In egui and gpui, the Y-axis is down.
 #[derive(Debug, Clone)]
 pub struct PathBuilder<const Y: bool = true> {
     pub points: SmallVec<[Vec2; 2]>,

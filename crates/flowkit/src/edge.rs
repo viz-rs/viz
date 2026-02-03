@@ -2,6 +2,16 @@ use glam::Vec2;
 
 use crate::{CURVATURE, OFFSET};
 
+/// Identifies an edge type of a connector.
+#[derive(Default, Clone, Copy, Debug, PartialEq)]
+pub enum EdgeType {
+    #[default]
+    Curve,
+    SmoothStep,
+    Straight,
+    StraightStep,
+}
+
 /// Identifies an edge anchor of a rectangle.
 ///
 /// If `Y` is `true`, Y-axis is up.
@@ -16,7 +26,7 @@ pub enum EdgeAnchor<const Y: bool = true> {
 }
 
 impl<const Y: bool> EdgeAnchor<Y> {
-    /// Casts an edge position to a vector.
+    /// Casts an edge anchor to a vector.
     #[inline]
     pub const fn as_vec2(&self) -> Vec2 {
         match self {
@@ -29,16 +39,6 @@ impl<const Y: bool> EdgeAnchor<Y> {
     }
 }
 
-/// Identifies an edge type of a connector.
-#[derive(Default, Clone, Copy, Debug, PartialEq)]
-pub enum EdgeType {
-    #[default]
-    Curve,
-    SmoothStep,
-    Straight,
-    StraightStep,
-}
-
 /// Identifies an edge point of a connector.
 ///
 /// Includes the position and the anchor.
@@ -47,7 +47,7 @@ pub enum EdgeType {
 /// If `Y` is `false`, Y-axis is down.
 pub type EdgePoint<const Y: bool = true> = (Vec2, EdgeAnchor<Y>);
 
-/// Draws an edge path.
+/// Generates an edge path.
 ///
 /// If `Y` is `true`, Y-axis is up.
 /// If `Y` is `false`, Y-axis is down.
