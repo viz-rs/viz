@@ -2,14 +2,12 @@ use egui::{
     Color32, Shape,
     epaint::{CubicBezierShape, QuadraticBezierShape},
 };
-use flowkit::{
-    CURVATURE, OFFSET,
-    edge::{EdgePosition, EdgeType},
-    path::PathBuilder,
-};
+use flowkit::{CURVATURE, OFFSET, edge::EdgeType, path::PathBuilder};
 use glam::Vec2;
 use lyon_path::{BuilderImpl, Event};
 pub use lyon_tessellation::StrokeOptions;
+
+pub type EdgePosition = flowkit::edge::EdgePosition<false>;
 
 use crate::{
     mesh::{Mode, Tessellator},
@@ -23,8 +21,9 @@ pub mod mesh;
 pub mod vertex;
 
 pub mod prelude {
+    pub use super::EdgePosition;
     pub use flowkit::corner::{Corner, CornerPathParams};
-    pub use flowkit::edge::{EdgePosition, EdgeType};
+    pub use flowkit::edge::EdgeType;
     pub use flowkit::{CURVATURE, OFFSET};
 }
 
@@ -67,7 +66,7 @@ impl EdgePath {
 
         let mut builder = BuilderImpl::new().with_svg();
 
-        PathBuilder::new(source, target, edge_type, curvature, offset).with(&mut builder);
+        PathBuilder::<false>::new(source, target, edge_type, curvature, offset).with(&mut builder);
 
         let path = builder.build();
 
@@ -158,7 +157,7 @@ impl EdgePath {
 
         let mut builder = BuilderImpl::new().with_svg();
 
-        PathBuilder::new(source, target, edge_type, curvature, offset).with(&mut builder);
+        PathBuilder::<false>::new(source, target, edge_type, curvature, offset).with(&mut builder);
 
         let path = builder.build();
 

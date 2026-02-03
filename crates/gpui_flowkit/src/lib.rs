@@ -1,14 +1,13 @@
-use flowkit::{
-    CURVATURE, OFFSET,
-    edge::{EdgePosition, EdgeType},
-    path::PathBuilder,
-};
+use flowkit::{CURVATURE, OFFSET, edge::EdgeType, path::PathBuilder};
 use glam::Vec2;
 use lyon_path::BuilderImpl;
 
+pub type EdgePosition = flowkit::edge::EdgePosition<false>;
+
 pub mod prelude {
+    pub use super::EdgePosition;
     pub use flowkit::corner::{Corner, CornerPathParams};
-    pub use flowkit::edge::{EdgePosition, EdgeType};
+    pub use flowkit::edge::EdgeType;
     pub use flowkit::{CURVATURE, OFFSET};
 }
 
@@ -37,7 +36,7 @@ impl EdgePath {
         offset: OFFSET,
     };
 
-    pub fn as_path_builder(&self) -> PathBuilder {
+    pub fn as_path_builder(&self) -> PathBuilder<false> {
         PathBuilder::new(
             self.source,
             self.target,

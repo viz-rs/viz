@@ -19,10 +19,10 @@ pub fn calculate_control_offset(distance: f32, curvature: f32) -> f32 {
 
 /// Calculates the control point for a curve based on the source and target points, edge position, curvature, and offset.
 #[inline]
-pub fn calculate_control_point(
+pub fn calculate_control_point<const N: bool>(
     source_pos: Vec2,
     target_pos: Vec2,
-    edge_position: EdgePosition,
+    edge_position: EdgePosition<N>,
     curvature: f32,
     offset: f32,
 ) -> Vec2 {

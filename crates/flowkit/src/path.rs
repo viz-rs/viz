@@ -11,19 +11,22 @@ use crate::{
 };
 
 /// A path builder.
+///
+/// If `N` is `true`, Y is up.
+/// If `N` is `false`, Y is down.
 #[derive(Debug, Clone)]
-pub struct PathBuilder {
+pub struct PathBuilder<const N: bool = true> {
     pub points: SmallVec<[Vec2; 2]>,
     pub edge_type: EdgeType,
     pub curvature: f32,
     pub offset: f32,
 }
 
-impl PathBuilder {
+impl<const N: bool> PathBuilder<N> {
     #[inline]
     pub fn new(
-        source: (Vec2, EdgePosition),
-        target: (Vec2, EdgePosition),
+        source: (Vec2, EdgePosition<N>),
+        target: (Vec2, EdgePosition<N>),
         edge_type: EdgeType,
         curvature: f32,
         offset: f32,
@@ -54,8 +57,8 @@ impl PathBuilder {
 
     #[inline]
     pub fn calculate_control_points(
-        source: (Vec2, EdgePosition),
-        target: (Vec2, EdgePosition),
+        source: (Vec2, EdgePosition<N>),
+        target: (Vec2, EdgePosition<N>),
         curvature: f32,
         offset: f32,
     ) -> [Vec2; 4] {
@@ -77,8 +80,8 @@ impl PathBuilder {
 
     #[inline]
     pub fn calculate_steps(
-        source: (Vec2, EdgePosition),
-        target: (Vec2, EdgePosition),
+        source: (Vec2, EdgePosition<N>),
+        target: (Vec2, EdgePosition<N>),
         offset: f32,
     ) -> SmallVec<[Vec2; 3]> {
         let (source_pos, source_edge) = source;

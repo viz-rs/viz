@@ -70,8 +70,8 @@ impl Render for FlowkitCanvas {
                         EdgePosition::Left,
                     ),
                     target: (
-                        glam::Vec2::new(0.5, 0.0) * glam::Vec2::new(100.0, 100.0),
-                        EdgePosition::Right,
+                        glam::Vec2::new(0.0, -0.5) * glam::Vec2::new(100.0, 100.0),
+                        EdgePosition::Top,
                     ),
                     edge_type: EdgeType::Curve,
                     ..Default::default()

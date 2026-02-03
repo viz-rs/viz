@@ -115,7 +115,7 @@ impl Default for PaintBezier {
                         EdgePosition::Right,
                     ),
                     target: (
-                        Vec2::new(0.0, -0.5) * Vec2::new(50.0, 50.0),
+                        Vec2::new(0.0, 0.5) * Vec2::new(50.0, 50.0),
                         EdgePosition::Bottom,
                     ),
                     edge_type: EdgeType::StraightStep,
@@ -128,7 +128,7 @@ impl Default for PaintBezier {
                         EdgePosition::Right,
                     ),
                     target: (
-                        Vec2::new(0.0, -0.5) * Vec2::new(50.0, 50.0),
+                        Vec2::new(0.0, 0.5) * Vec2::new(50.0, 50.0),
                         EdgePosition::Bottom,
                     ),
                     edge_type: EdgeType::SmoothStep,
