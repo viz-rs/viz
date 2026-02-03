@@ -4,16 +4,15 @@ use eframe::egui::{
 };
 
 use egui_flowkit::{
-    EdgePath, StrokeOptions,
+    Connection, EdgeAnchor, EdgePath, EdgeType, StrokeOptions,
     mesh::{Mode, Tessellator},
-    prelude::{EdgePosition, EdgeType},
 };
 
 struct Edge {
     source_id: usize,
     target_id: usize,
-    source: (Vec2, EdgePosition),
-    target: (Vec2, EdgePosition),
+    source: (Vec2, EdgeAnchor),
+    target: (Vec2, EdgeAnchor),
     edge_type: EdgeType,
 }
 
@@ -86,11 +85,11 @@ impl Default for PaintBezier {
                     target_id: 1,
                     source: (
                         Vec2::new(0.5, 0.0) * Vec2::new(50.0, 50.0),
-                        EdgePosition::Right,
+                        EdgeAnchor::Right,
                     ),
                     target: (
                         Vec2::new(-0.5, 0.0) * Vec2::new(50.0, 50.0),
-                        EdgePosition::Left,
+                        EdgeAnchor::Left,
                     ),
                     edge_type: EdgeType::Straight,
                 },
@@ -99,11 +98,11 @@ impl Default for PaintBezier {
                     target_id: 2,
                     source: (
                         Vec2::new(0.5, 0.0) * Vec2::new(50.0, 50.0),
-                        EdgePosition::Right,
+                        EdgeAnchor::Right,
                     ),
                     target: (
                         Vec2::new(-0.5, 0.0) * Vec2::new(50.0, 50.0),
-                        EdgePosition::Left,
+                        EdgeAnchor::Left,
                     ),
                     edge_type: EdgeType::Curve,
                 },
@@ -112,11 +111,11 @@ impl Default for PaintBezier {
                     target_id: 3,
                     source: (
                         Vec2::new(0.5, 0.0) * Vec2::new(50.0, 50.0),
-                        EdgePosition::Right,
+                        EdgeAnchor::Right,
                     ),
                     target: (
                         Vec2::new(0.0, 0.5) * Vec2::new(50.0, 50.0),
-                        EdgePosition::Bottom,
+                        EdgeAnchor::Bottom,
                     ),
                     edge_type: EdgeType::StraightStep,
                 },
@@ -125,11 +124,11 @@ impl Default for PaintBezier {
                     target_id: 2,
                     source: (
                         Vec2::new(0.5, 0.0) * Vec2::new(50.0, 50.0),
-                        EdgePosition::Right,
+                        EdgeAnchor::Right,
                     ),
                     target: (
                         Vec2::new(0.0, 0.5) * Vec2::new(50.0, 50.0),
-                        EdgePosition::Bottom,
+                        EdgeAnchor::Bottom,
                     ),
                     edge_type: EdgeType::SmoothStep,
                 },
@@ -246,15 +245,16 @@ impl PaintBezier {
                 let source_pos = to_screen.transform_pos(source_translation + source_offset);
                 let target_pos = to_screen.transform_pos(target_translation + target_offset);
 
-                let edge_path = EdgePath {
+                let connection: Connection = EdgePath {
                     source: (glam::Vec2::new(source_pos.x, source_pos.y), source_edge_pos),
                     target: (glam::Vec2::new(target_pos.x, target_pos.y), target_edge_pos),
                     edge_type,
                     ..Default::default()
-                };
+                }
+                .into();
 
                 if self.mesh {
-                    edge_path.build_with(
+                    connection.build_with(
                         Mode {
                             color: self.stroke.color,
                             options: StrokeOptions::tolerance(tolerance)
@@ -263,7 +263,7 @@ impl PaintBezier {
                         &mut self.tess,
                     )
                 } else {
-                    edge_path.build(self.stroke)
+                    connection.build(self.stroke)
                 }
             })
             .collect::<Vec<_>>();

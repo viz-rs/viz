@@ -3,14 +3,9 @@ use gpui::{
     PathBuilder, PathStyle, Render, StrokeOptions, Styled, Window, WindowOptions, canvas, div,
     hsla, px, rgb, white,
 };
-use gpui_flowkit::{
-    EdgePath,
-    prelude::{EdgePosition, EdgeType},
-};
+use gpui_flowkit::{Connection, EdgeAnchor, EdgePath, EdgeType};
 
-// Fixme:
-// 1. flip Y for calculating position
-// 2. drag and drop nodes
+// Fixme: drag and drop nodes
 
 struct FlowkitCanvas {}
 
@@ -35,11 +30,11 @@ impl Render for FlowkitCanvas {
                 EdgePath {
                     source: (
                         glam::Vec2::new(0.5, 0.0) * glam::Vec2::new(100.0, 100.0),
-                        EdgePosition::Right,
+                        EdgeAnchor::Right,
                     ),
                     target: (
                         glam::Vec2::new(-0.5, 0.0) * glam::Vec2::new(100.0, 100.0),
-                        EdgePosition::Left,
+                        EdgeAnchor::Left,
                     ),
                     edge_type: EdgeType::Straight,
                     ..Default::default()
@@ -51,11 +46,11 @@ impl Render for FlowkitCanvas {
                 EdgePath {
                     source: (
                         glam::Vec2::new(-0.5, 0.0) * glam::Vec2::new(100.0, 100.0),
-                        EdgePosition::Left,
+                        EdgeAnchor::Left,
                     ),
                     target: (
                         glam::Vec2::new(0.5, 0.0) * glam::Vec2::new(100.0, 100.0),
-                        EdgePosition::Right,
+                        EdgeAnchor::Right,
                     ),
                     edge_type: EdgeType::StraightStep,
                     ..Default::default()
@@ -67,11 +62,11 @@ impl Render for FlowkitCanvas {
                 EdgePath {
                     source: (
                         glam::Vec2::new(-0.5, 0.0) * glam::Vec2::new(100.0, 100.0),
-                        EdgePosition::Left,
+                        EdgeAnchor::Left,
                     ),
                     target: (
                         glam::Vec2::new(0.0, -0.5) * glam::Vec2::new(100.0, 100.0),
-                        EdgePosition::Top,
+                        EdgeAnchor::Top,
                     ),
                     edge_type: EdgeType::Curve,
                     ..Default::default()
@@ -83,11 +78,11 @@ impl Render for FlowkitCanvas {
                 EdgePath {
                     source: (
                         glam::Vec2::new(-0.5, 0.0) * glam::Vec2::new(100.0, 100.0),
-                        EdgePosition::Left,
+                        EdgeAnchor::Left,
                     ),
                     target: (
                         glam::Vec2::new(0.5, 0.0) * glam::Vec2::new(100.0, 100.0),
-                        EdgePosition::Right,
+                        EdgeAnchor::Right,
                     ),
                     edge_type: EdgeType::SmoothStep,
                     ..Default::default()
@@ -110,7 +105,7 @@ impl Render for FlowkitCanvas {
                             let source_pos = source_shape_pos + source_offset;
                             let target_pos = target_shape_pos + target_offset;
 
-                            let edge_path = EdgePath {
+                            let connection: Connection = EdgePath {
                                 source: (
                                     glam::Vec2::new(source_pos.x, source_pos.y),
                                     source_edge_pos,
@@ -121,9 +116,10 @@ impl Render for FlowkitCanvas {
                                 ),
                                 edge_type: edge.edge_type,
                                 ..Default::default()
-                            };
+                            }
+                            .into();
 
-                            let builder = Into::<PathBuilder>::into(edge_path).with_style(
+                            let builder = PathBuilder::from(connection).with_style(
                                 PathStyle::Stroke(StrokeOptions::DEFAULT.with_line_width(2.0)),
                             );
 

@@ -2,12 +2,19 @@ use egui::{
     Color32, Shape,
     epaint::{CubicBezierShape, QuadraticBezierShape},
 };
-use flowkit::{CURVATURE, OFFSET, edge::EdgeType, path::PathBuilder};
-use glam::Vec2;
-use lyon_path::{BuilderImpl, Event};
+use flowkit::path::PathBuilder;
+use lyon_path::{BuilderImpl, Event, builder::WithSvg};
+
 pub use lyon_tessellation::StrokeOptions;
 
-pub type EdgePosition = flowkit::edge::EdgePosition<false>;
+pub use flowkit::corner::{Corner, CornerPathParams};
+pub use flowkit::edge::EdgeType;
+
+// Y-axis should be down.
+pub type EdgeAnchor = flowkit::edge::EdgeAnchor<false>;
+pub type EdgePoint = flowkit::edge::EdgePoint<false>;
+pub type EdgePath = flowkit::edge::EdgePath<false>;
+pub type Pathbuilder = flowkit::path::PathBuilder<false>;
 
 use crate::{
     mesh::{Mode, Tessellator},
@@ -20,54 +27,30 @@ mod utils;
 pub mod mesh;
 pub mod vertex;
 
-pub mod prelude {
-    pub use super::EdgePosition;
-    pub use flowkit::corner::{Corner, CornerPathParams};
-    pub use flowkit::edge::EdgeType;
-    pub use flowkit::{CURVATURE, OFFSET};
-}
-
-/// Draws an edge path.
+/// Draws a connection, the `EdgePath` wrapper.
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct EdgePath {
-    pub source: (Vec2, EdgePosition),
-    pub target: (Vec2, EdgePosition),
-    pub edge_type: EdgeType,
-    pub curvature: f32,
-    pub offset: f32,
-}
+pub struct Connection(EdgePath);
 
-impl Default for EdgePath {
+impl Default for Connection {
     fn default() -> Self {
-        Self::DEFAULT
+        Self(EdgePath::DEFAULT)
     }
 }
 
-impl EdgePath {
-    pub const DEFAULT: Self = Self {
-        source: (Vec2::ZERO, EdgePosition::Right),
-        target: (Vec2::ZERO, EdgePosition::Left),
-        edge_type: EdgeType::Straight,
-        curvature: CURVATURE,
-        offset: OFFSET,
-    };
+impl From<EdgePath> for Connection {
+    fn from(path: EdgePath) -> Self {
+        Self(path)
+    }
+}
 
+impl Connection {
     pub fn build(self, stroke: impl Into<egui::Stroke>) -> Shape {
-        let Self {
-            source,
-            target,
-            edge_type,
-            curvature,
-            offset,
-        } = self;
-
         const FILL: Color32 = Color32::TRANSPARENT;
         let stroke = stroke.into();
+        let edge_type = self.0.edge_type;
 
-        let mut builder = BuilderImpl::new().with_svg();
-
-        PathBuilder::<false>::new(source, target, edge_type, curvature, offset).with(&mut builder);
-
+        let internal_builder = PathBuilder::from(self.0);
+        let builder: WithSvg<BuilderImpl> = internal_builder.into();
         let path = builder.build();
 
         let mut events = path.iter().filter(|&e| match e {
@@ -147,18 +130,8 @@ impl EdgePath {
     }
 
     pub fn build_with(self, mode: Mode<StrokeOptions>, tess: &mut Tessellator) -> Shape {
-        let Self {
-            source,
-            target,
-            edge_type,
-            curvature,
-            offset,
-        } = self;
-
-        let mut builder = BuilderImpl::new().with_svg();
-
-        PathBuilder::<false>::new(source, target, edge_type, curvature, offset).with(&mut builder);
-
+        let internal_builder = PathBuilder::from(self.0);
+        let builder: WithSvg<BuilderImpl> = internal_builder.into();
         let path = builder.build();
 
         let mut buffers = VertexBuffers::new();

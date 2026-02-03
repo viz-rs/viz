@@ -10,7 +10,7 @@ use bevy::{
     prelude::*,
 };
 
-use bevy_flowkit::{EdgePath, prelude::*};
+use bevy_flowkit::*;
 use bevy_prototype_lyon::{
     draw::Stroke,
     entity::Shape,
@@ -31,8 +31,8 @@ pub use utils::*;
 
 #[derive(Component, Clone, Debug)]
 pub struct Edge {
-    pub source_position: (Vec2, EdgePosition),
-    pub target_position: (Vec2, EdgePosition),
+    pub source_position: EdgePoint,
+    pub target_position: EdgePoint,
     pub edge_type: EdgeType,
     pub color: Color,
 }
@@ -40,8 +40,8 @@ pub struct Edge {
 impl Default for Edge {
     fn default() -> Self {
         Self {
-            source_position: (Vec2::ZERO, EdgePosition::Top),
-            target_position: (Vec2::ZERO, EdgePosition::Bottom),
+            source_position: (Vec2::ZERO, EdgeAnchor::Top),
+            target_position: (Vec2::ZERO, EdgeAnchor::Bottom),
             edge_type: EdgeType::Straight,
             color: Color::oklch(0.92, 0.0, 0.0),
         }
@@ -340,11 +340,11 @@ fn setup(
         Edge {
             source_position: (
                 Vec2::new(0.0, -0.5) * Vec2::new(100.0, 100.0),
-                EdgePosition::Bottom,
+                EdgeAnchor::Bottom,
             ),
             target_position: (
                 Vec2::new(0.0, -0.5) * Vec2::new(25.0, 25.0),
-                EdgePosition::Bottom,
+                EdgeAnchor::Bottom,
             ),
             edge_type: EdgeType::Straight,
             ..default()
@@ -355,25 +355,22 @@ fn setup(
         mesh_node_id_2,
         mesh_node_id_0,
         Edge {
-            source_position: (
-                Vec2::new(0.5, 1.0) * Vec2::new(50.0, 25.0),
-                EdgePosition::Top,
-            ),
+            source_position: (Vec2::new(0.5, 1.0) * Vec2::new(50.0, 25.0), EdgeAnchor::Top),
             // source_position: (
             //     Vec2::new(0.625, 0.5) * Vec2::new(50.0, 25.0),
-            //     EdgePosition::Right,
+            //     EdgeAnchor::Right,
             // ),
             // source_position: (
             //     Vec2::new(0.125, 0.5) * Vec2::new(50.0, 25.0),
-            //     EdgePosition::Left,
+            //     EdgeAnchor::Left,
             // ),
             // source_position: (
             //     Vec2::new(0.5, 0.0) * Vec2::new(50.0, 25.0),
-            //     EdgePosition::Bottom,
+            //     EdgeAnchor::Bottom,
             // ),
             target_position: (
                 Vec2::new(0.5, 0.25) * Vec2::new(100.0, 100.0),
-                EdgePosition::Right,
+                EdgeAnchor::Right,
             ),
             edge_type: EdgeType::StraightStep,
             ..default()
@@ -386,23 +383,23 @@ fn setup(
         Edge {
             source_position: (
                 Vec2::new(0.5, 0.25) * Vec2::new(100.0, 100.0),
-                EdgePosition::Right,
+                EdgeAnchor::Right,
             ),
             // target_position: (
             //     Vec2::new(0.0, 0.5) * Vec2::new(80.0, 100.0),
-            //     EdgePosition::Top,
+            //     EdgeAnchor::Top,
             // ),
             // target_position: (
             //     Vec2::new(0.5, 0.0) * Vec2::new(80.0, 100.0),
-            //     EdgePosition::Right,
+            //     EdgeAnchor::Right,
             // ),
             // target_position: (
             //     Vec2::new(-0.5, 0.0) * Vec2::new(80.0, 100.0),
-            //     EdgePosition::Left,
+            //     EdgeAnchor::Left,
             // ),
             target_position: (
                 Vec2::new(0.0, -0.5) * Vec2::new(80.0, 100.0),
-                EdgePosition::Bottom,
+                EdgeAnchor::Bottom,
             ),
             edge_type: EdgeType::StraightStep,
             ..default()
@@ -415,9 +412,9 @@ fn setup(
         Edge {
             source_position: (
                 Vec2::new(0.0, 0.5) * Vec2::new(100.0, 100.0),
-                EdgePosition::Top,
+                EdgeAnchor::Top,
             ),
-            target_position: (Vec2::new(0.0, 0.0), EdgePosition::Left),
+            target_position: (Vec2::new(0.0, 0.0), EdgeAnchor::Left),
             edge_type: EdgeType::StraightStep,
             ..default()
         },
@@ -429,11 +426,11 @@ fn setup(
         Edge {
             source_position: (
                 Vec2::new(0.5, 0.0) * Vec2::new(100.0, 100.0),
-                EdgePosition::Right,
+                EdgeAnchor::Right,
             ),
             target_position: (
                 Vec2::new(-0.5, 0.0) * Vec2::new(100.0, 100.0),
-                EdgePosition::Left,
+                EdgeAnchor::Left,
             ),
             edge_type: EdgeType::SmoothStep,
             ..default()
@@ -447,11 +444,11 @@ fn setup(
             Edge {
                 source_position: (
                     Vec2::new(0.0, 0.5) * Vec2::new(100.0, 100.0),
-                    EdgePosition::Top,
+                    EdgeAnchor::Top,
                 ),
                 target_position: (
                     Vec2::new(-0.5, 0.0) * Vec2::new(100.0, 100.0),
-                    EdgePosition::Left,
+                    EdgeAnchor::Left,
                 ),
                 edge_type: EdgeType::SmoothStep,
                 ..default()
@@ -463,11 +460,11 @@ fn setup(
             Edge {
                 source_position: (
                     Vec2::new(0.0, 0.5) * Vec2::new(100.0, 100.0),
-                    EdgePosition::Top,
+                    EdgeAnchor::Top,
                 ),
                 target_position: (
                     Vec2::new(0.0, -0.5) * Vec2::new(100.0, 100.0),
-                    EdgePosition::Bottom,
+                    EdgeAnchor::Bottom,
                 ),
                 edge_type: EdgeType::Curve,
                 ..default()
@@ -479,11 +476,11 @@ fn setup(
             Edge {
                 source_position: (
                     Vec2::new(0.0, -0.5) * Vec2::new(100.0, 100.0),
-                    EdgePosition::Bottom,
+                    EdgeAnchor::Bottom,
                 ),
                 target_position: (
                     Vec2::new(-0.5, 0.0) * Vec2::new(100.0, 100.0),
-                    EdgePosition::Left,
+                    EdgeAnchor::Left,
                 ),
                 edge_type: EdgeType::StraightStep,
                 ..default()
@@ -495,11 +492,11 @@ fn setup(
             Edge {
                 source_position: (
                     Vec2::new(0.5, 0.0) * Vec2::new(100.0, 100.0),
-                    EdgePosition::Right,
+                    EdgeAnchor::Right,
                 ),
                 target_position: (
                     Vec2::new(-0.5, 0.0) * Vec2::new(100.0, 100.0),
-                    EdgePosition::Left,
+                    EdgeAnchor::Left,
                 ),
                 edge_type: EdgeType::SmoothStep,
                 color: YELLOW_500.with_alpha(0.5).into(),
@@ -511,11 +508,11 @@ fn setup(
             Edge {
                 source_position: (
                     Vec2::new(-0.5, 0.25) * Vec2::new(100.0, 100.0),
-                    EdgePosition::Left,
+                    EdgeAnchor::Left,
                 ),
                 target_position: (
                     Vec2::new(0.5, -0.25) * Vec2::new(100.0, 100.0),
-                    EdgePosition::Right,
+                    EdgeAnchor::Right,
                 ),
                 edge_type: EdgeType::SmoothStep,
                 color: STONE_500.with_alpha(0.5).into(),
@@ -527,11 +524,11 @@ fn setup(
             Edge {
                 source_position: (
                     Vec2::new(0.0, -0.5) * Vec2::new(100.0, 100.0),
-                    EdgePosition::Bottom,
+                    EdgeAnchor::Bottom,
                 ),
                 target_position: (
                     Vec2::new(0.5, -0.25) * Vec2::new(150.0, 150.0),
-                    EdgePosition::Right,
+                    EdgeAnchor::Right,
                 ),
                 edge_type: EdgeType::Curve,
                 color: GRAY_500.with_alpha(0.5).into(),
@@ -543,11 +540,11 @@ fn setup(
             Edge {
                 source_position: (
                     Vec2::new(0.5, 0.0) * Vec2::new(100.0, 100.0),
-                    EdgePosition::Right,
+                    EdgeAnchor::Right,
                 ),
                 target_position: (
                     Vec2::new(-0.5, -0.25) * Vec2::new(150.0, 150.0),
-                    EdgePosition::Left,
+                    EdgeAnchor::Left,
                 ),
                 edge_type: EdgeType::SmoothStep,
                 color: BLUE_500.with_alpha(0.5).into(),
@@ -633,14 +630,15 @@ fn draw_edges(
         let source_pos = source_transform.translation.truncate() + source_offset;
         let target_pos = target_transform.translation.truncate() + target_offset;
 
-        let edge_path = EdgePath {
+        let connection: Connection = EdgePath {
             source: (source_pos, source_edge_pos),
             target: (target_pos, target_edge_pos),
             edge_type,
             ..default()
-        };
+        }
+        .into();
 
-        let shape = ShapeBuilder::with(&edge_path)
+        let shape = ShapeBuilder::with(&connection)
             .stroke(Stroke { color, ..stroke })
             .build();
 

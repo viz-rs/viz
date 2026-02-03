@@ -1,56 +1,31 @@
-use bevy_math::Vec2;
 use bevy_prototype_lyon::prelude::Geometry;
-use flowkit::{
-    CURVATURE, OFFSET,
-    edge::{EdgePosition, EdgeType},
-    path::PathBuilder,
-};
 use lyon_path::{BuilderImpl, builder::WithSvg};
 
-pub mod prelude {
-    pub use flowkit::corner::{Corner, CornerPathParams};
-    pub use flowkit::edge::{EdgePosition, EdgeType};
-    pub use flowkit::{CURVATURE, OFFSET};
-}
+pub use flowkit::{
+    corner::{Corner, CornerPathParams},
+    edge::{EdgeAnchor, EdgePath, EdgePoint, EdgeType},
+    path::PathBuilder,
+};
 
-/// Draws an edge path.
+/// Draws a connection, the `EdgePath` wrapper.
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct EdgePath {
-    pub source: (Vec2, EdgePosition),
-    pub target: (Vec2, EdgePosition),
-    pub edge_type: EdgeType,
-    pub curvature: f32,
-    pub offset: f32,
-}
+pub struct Connection(EdgePath);
 
-impl Default for EdgePath {
+impl Default for Connection {
     fn default() -> Self {
-        Self::DEFAULT
+        Self(EdgePath::DEFAULT)
     }
 }
 
-impl EdgePath {
-    pub const DEFAULT: Self = Self {
-        source: (Vec2::ZERO, EdgePosition::Right),
-        target: (Vec2::ZERO, EdgePosition::Left),
-        edge_type: EdgeType::Straight,
-        curvature: CURVATURE,
-        offset: OFFSET,
-    };
-
-    pub fn as_path_builder(&self) -> PathBuilder {
-        PathBuilder::new(
-            self.source,
-            self.target,
-            self.edge_type,
-            self.curvature,
-            self.offset,
-        )
+impl From<EdgePath> for Connection {
+    fn from(path: EdgePath) -> Self {
+        Self(path)
     }
 }
 
-impl Geometry<WithSvg<BuilderImpl>> for EdgePath {
+impl Geometry<WithSvg<BuilderImpl>> for Connection {
     fn add_geometry(&self, builder: &mut WithSvg<BuilderImpl>) {
-        self.as_path_builder().with(builder);
+        let internal_builder = PathBuilder::from(self.0);
+        internal_builder.with_svg(builder);
     }
 }

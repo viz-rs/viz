@@ -1,58 +1,35 @@
-use flowkit::{CURVATURE, OFFSET, edge::EdgeType, path::PathBuilder};
-use glam::Vec2;
 use lyon_path::BuilderImpl;
 
-pub type EdgePosition = flowkit::edge::EdgePosition<false>;
+pub use flowkit::corner::{Corner, CornerPathParams};
+pub use flowkit::edge::EdgeType;
+use lyon_path::builder::WithSvg;
 
-pub mod prelude {
-    pub use super::EdgePosition;
-    pub use flowkit::corner::{Corner, CornerPathParams};
-    pub use flowkit::edge::EdgeType;
-    pub use flowkit::{CURVATURE, OFFSET};
-}
+// Y-axis should be down.
+pub type EdgeAnchor = flowkit::edge::EdgeAnchor<false>;
+pub type EdgePoint = flowkit::edge::EdgePoint<false>;
+pub type EdgePath = flowkit::edge::EdgePath<false>;
+pub type PathBuilder = flowkit::path::PathBuilder<false>;
 
-/// Draws an edge path.
+/// Draws a connection, the `EdgePath` wrapper.
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct EdgePath {
-    pub source: (Vec2, EdgePosition),
-    pub target: (Vec2, EdgePosition),
-    pub edge_type: EdgeType,
-    pub curvature: f32,
-    pub offset: f32,
-}
+pub struct Connection(EdgePath);
 
-impl Default for EdgePath {
+impl Default for Connection {
     fn default() -> Self {
-        Self::DEFAULT
+        Self(EdgePath::DEFAULT)
     }
 }
 
-impl EdgePath {
-    pub const DEFAULT: Self = Self {
-        source: (Vec2::ZERO, EdgePosition::Right),
-        target: (Vec2::ZERO, EdgePosition::Left),
-        edge_type: EdgeType::Straight,
-        curvature: CURVATURE,
-        offset: OFFSET,
-    };
-
-    pub fn as_path_builder(&self) -> PathBuilder<false> {
-        PathBuilder::new(
-            self.source,
-            self.target,
-            self.edge_type,
-            self.curvature,
-            self.offset,
-        )
+impl From<EdgePath> for Connection {
+    fn from(path: EdgePath) -> Self {
+        Self(path)
     }
 }
 
-impl Into<gpui::PathBuilder> for EdgePath {
-    fn into(self) -> gpui::PathBuilder {
-        let mut builder = BuilderImpl::new().with_svg();
-
-        self.as_path_builder().with(&mut builder);
-
+impl From<Connection> for gpui::PathBuilder {
+    fn from(conn: Connection) -> Self {
+        let internal_builder = PathBuilder::from(conn.0);
+        let builder: WithSvg<BuilderImpl> = internal_builder.into();
         builder.into()
     }
 }

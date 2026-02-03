@@ -1,6 +1,6 @@
 use glam::Vec2;
 
-use crate::edge::EdgePosition;
+use crate::edge::EdgeAnchor;
 
 /// Calculates the control offset for a curve based on the distance and curvature.
 #[inline]
@@ -19,16 +19,16 @@ pub fn calculate_control_offset(distance: f32, curvature: f32) -> f32 {
 
 /// Calculates the control point for a curve based on the source and target points, edge position, curvature, and offset.
 #[inline]
-pub fn calculate_control_point<const N: bool>(
+pub fn calculate_control_point<const Y: bool>(
     source_pos: Vec2,
     target_pos: Vec2,
-    edge_position: EdgePosition<N>,
+    edge_anchor: EdgeAnchor<Y>,
     curvature: f32,
     offset: f32,
 ) -> Vec2 {
     let delta = source_pos - target_pos;
     let factor = curvature * offset;
-    let direction = edge_position.as_vec2();
+    let direction = edge_anchor.as_vec2();
 
     let x = calculate_control_offset(delta.x, factor);
     let y = calculate_control_offset(delta.y, factor);
