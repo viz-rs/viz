@@ -29,20 +29,22 @@ impl Default for Tessellator {
 
 impl Tessellator {
     pub fn fill(&mut self, path: &Path, mode: Mode<FillOptions>, buffers: &mut VertexBuffers) {
+        let Mode { options, color } = mode;
         if let Err(e) = self.fill.tessellate_path(
             path,
-            &mode.options,
-            &mut BuffersBuilder::new(buffers, VertexConstructor { color: mode.color }),
+            &options,
+            &mut BuffersBuilder::new(buffers, VertexConstructor { color }),
         ) {
             tracing::error!("FillTessellator error: {:?}", e);
         }
     }
 
     pub fn stroke(&mut self, path: &Path, mode: Mode<StrokeOptions>, buffers: &mut VertexBuffers) {
+        let Mode { options, color } = mode;
         if let Err(e) = self.stroke.tessellate_path(
             path,
-            &mode.options,
-            &mut BuffersBuilder::new(buffers, VertexConstructor { color: mode.color }),
+            &options,
+            &mut BuffersBuilder::new(buffers, VertexConstructor { color }),
         ) {
             tracing::error!("StrokeTessellator error: {:?}", e);
         }

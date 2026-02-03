@@ -1,5 +1,5 @@
 use egui::{
-    Color32, Pos2, Shape,
+    Color32, Shape,
     epaint::{CubicBezierShape, QuadraticBezierShape},
 };
 use flowkit::{
@@ -12,8 +12,11 @@ pub use lyon_tessellation::StrokeOptions;
 
 use crate::{
     mesh::{Mode, Tessellator},
+    utils::Convert,
     vertex::VertexBuffers,
 };
+
+mod utils;
 
 pub mod mesh;
 pub mod vertex;
@@ -58,13 +61,13 @@ impl EdgePath {
         match edge_type {
             EdgeType::Straight => {
                 if let Some(Event::Line { from, to }) = events.next() {
-                    return Shape::line_segment([from, to].map(|v| Pos2::new(v.x, v.y)), stroke);
+                    return Shape::line_segment([from, to].convert(), stroke);
                 }
             }
             EdgeType::StraightStep => {
                 let mut points = Vec::new();
                 while let Some(Event::Line { from, to }) = events.next() {
-                    points.extend([from, to].map(|v| Pos2::new(v.x, v.y)));
+                    points.extend([from, to].convert());
                 }
                 return Shape::line(points, stroke);
             }
@@ -73,15 +76,12 @@ impl EdgePath {
                 for event in events {
                     match event {
                         Event::Line { from, to } => {
-                            shapes.push(Shape::line_segment(
-                                [from, to].map(|v| Pos2::new(v.x, v.y)),
-                                stroke,
-                            ));
+                            shapes.push(Shape::line_segment([from, to].convert(), stroke));
                         }
                         Event::Quadratic { from, ctrl, to } => {
                             shapes.push(Shape::QuadraticBezier(
                                 QuadraticBezierShape::from_points_stroke(
-                                    [from, ctrl, to].map(|v| Pos2::new(v.x, v.y)),
+                                    [from, ctrl, to].convert(),
                                     false,
                                     Color32::TRANSPARENT,
                                     stroke,
@@ -95,7 +95,7 @@ impl EdgePath {
                             to,
                         } => {
                             shapes.push(Shape::CubicBezier(CubicBezierShape::from_points_stroke(
-                                [from, ctrl1, ctrl2, to].map(|v| Pos2::new(v.x, v.y)),
+                                [from, ctrl1, ctrl2, to].convert(),
                                 false,
                                 Color32::TRANSPARENT,
                                 stroke,
@@ -118,7 +118,7 @@ impl EdgePath {
                 }) = events.next()
                 {
                     return Shape::CubicBezier(CubicBezierShape::from_points_stroke(
-                        [from, ctrl1, ctrl2, to].map(|v| Pos2::new(v.x, v.y)),
+                        [from, ctrl1, ctrl2, to].convert(),
                         false,
                         Color32::TRANSPARENT,
                         stroke,

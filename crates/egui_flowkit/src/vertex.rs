@@ -1,10 +1,12 @@
 use egui::{
-    Color32, Pos2,
+    Color32,
     epaint::{Vertex, WHITE_UV},
 };
 use lyon_tessellation::{
     self as tess, FillVertex, FillVertexConstructor, StrokeVertex, StrokeVertexConstructor,
 };
+
+use crate::Convert;
 
 /// The index type of a epaint [`Mesh`](epaint::Mesh).
 type IndexType = u32;
@@ -19,11 +21,10 @@ pub struct VertexConstructor {
 /// Enables the construction of a [`Vertex`] when using a `FillTessellator`.
 impl FillVertexConstructor<Vertex> for VertexConstructor {
     fn new_vertex(&mut self, vertex: FillVertex) -> Vertex {
-        let pos = vertex.position();
         Vertex {
             uv: WHITE_UV,
             color: self.color,
-            pos: Pos2::new(pos.x, pos.y),
+            pos: vertex.position().convert(),
         }
     }
 }
@@ -31,11 +32,10 @@ impl FillVertexConstructor<Vertex> for VertexConstructor {
 /// Enables the construction of a [`Vertex`] when using a `StrokeTessellator`.
 impl StrokeVertexConstructor<Vertex> for VertexConstructor {
     fn new_vertex(&mut self, vertex: StrokeVertex) -> Vertex {
-        let pos = vertex.position();
         Vertex {
             uv: WHITE_UV,
-            pos: Pos2::new(pos.x, pos.y),
             color: self.color,
+            pos: vertex.position().convert(),
         }
     }
 }
