@@ -38,6 +38,12 @@ Viz is a visual creative space.
   cargo run --example egui_canvas
   ```
 
+* [gpui canvas](examples/gpui/src/canvas.rs): A simple flow chat for gpui.
+
+  ```console
+  cargo run --example gpui_canvas
+  ```
+
 ## License
 
 Viz is free, open source and permissively licensed!
