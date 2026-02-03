@@ -1,10 +1,6 @@
-#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
-#![expect(rustdoc::missing_crate_level_docs)] // it's an example
-
-use eframe::egui;
-use egui::{
-    Color32, Frame, Grid, Pos2, Rect, Sense, Shape, Stroke, StrokeKind, Ui, Vec2, Widget as _,
-    emath, epaint::RectShape, pos2,
+use eframe::egui::{
+    self, Color32, Frame, Grid, Pos2, Rect, Sense, Shape, Stroke, StrokeKind, Ui, Vec2,
+    Widget as _, emath, epaint::RectShape, pos2,
 };
 
 use egui_flowkit::{
@@ -12,9 +8,6 @@ use egui_flowkit::{
     mesh::{Mode, Tessellator},
     prelude::{EdgePosition, EdgeType},
 };
-
-const CURVATURE: f32 = 0.25;
-const OFFSET: f32 = 25.0;
 
 struct Edge {
     source_id: usize,
@@ -36,17 +29,17 @@ fn main() -> eframe::Result {
     };
 
     eframe::run_native(
-        "My flowkit App",
+        "Flowkit Canvas",
         options,
-        Box::new(|_cc| Ok(Box::<MyApp>::default())),
+        Box::new(|_cc| Ok(Box::<FlowkitCanvas>::default())),
     )
 }
 
-struct MyApp {
+struct FlowkitCanvas {
     paint_bezier: PaintBezier,
 }
 
-impl Default for MyApp {
+impl Default for FlowkitCanvas {
     fn default() -> Self {
         Self {
             paint_bezier: PaintBezier::default(),
@@ -54,7 +47,7 @@ impl Default for MyApp {
     }
 }
 
-impl eframe::App for MyApp {
+impl eframe::App for FlowkitCanvas {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
             self.paint_bezier.ui(ui);
@@ -188,7 +181,7 @@ impl PaintBezier {
         });
 
         ui.label("Move the points by dragging them.");
-        ui.label("Tessellation options doesn't work in lyon.");
+        ui.label("Tessellation `feathering` option doesn't work in lyon.");
     }
 
     pub fn ui_content(&mut self, ui: &mut Ui) -> egui::Response {
@@ -230,6 +223,8 @@ impl PaintBezier {
             })
             .collect();
 
+        let tolerance = ui.ctx().tessellation_options(|to| *to).bezier_tolerance;
+
         let paths = self
             .edges
             .iter_mut()
@@ -255,15 +250,15 @@ impl PaintBezier {
                     source: (glam::Vec2::new(source_pos.x, source_pos.y), source_edge_pos),
                     target: (glam::Vec2::new(target_pos.x, target_pos.y), target_edge_pos),
                     edge_type,
-                    curvature: CURVATURE,
-                    offset: OFFSET,
+                    ..Default::default()
                 };
 
                 if self.mesh {
                     edge_path.build_with(
                         Mode {
                             color: self.stroke.color,
-                            options: StrokeOptions::DEFAULT.with_line_width(self.stroke.width),
+                            options: StrokeOptions::tolerance(tolerance)
+                                .with_line_width(self.stroke.width),
                         },
                         &mut self.tess,
                     )

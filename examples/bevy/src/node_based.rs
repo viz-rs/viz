@@ -29,9 +29,6 @@ mod utils;
 
 pub use utils::*;
 
-const CURVATURE: f32 = 0.25;
-const OFFSET: f32 = 25.0;
-
 #[derive(Component, Clone, Debug)]
 pub struct Edge {
     pub source_position: (Vec2, EdgePosition),
@@ -640,8 +637,7 @@ fn draw_edges(
             source: (source_pos, source_edge_pos),
             target: (target_pos, target_edge_pos),
             edge_type,
-            curvature: CURVATURE,
-            offset: OFFSET,
+            ..default()
         };
 
         let shape = ShapeBuilder::with(&edge_path)

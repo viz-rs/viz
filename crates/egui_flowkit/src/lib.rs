@@ -3,6 +3,7 @@ use egui::{
     epaint::{CubicBezierShape, QuadraticBezierShape},
 };
 use flowkit::{
+    CURVATURE, OFFSET,
     edge::{EdgePosition, EdgeType},
     path::PathBuilder,
 };
@@ -24,6 +25,7 @@ pub mod vertex;
 pub mod prelude {
     pub use flowkit::corner::{Corner, CornerPathParams};
     pub use flowkit::edge::{EdgePosition, EdgeType};
+    pub use flowkit::{CURVATURE, OFFSET};
 }
 
 /// Draws an edge path.
@@ -36,7 +38,21 @@ pub struct EdgePath {
     pub offset: f32,
 }
 
+impl Default for EdgePath {
+    fn default() -> Self {
+        Self::DEFAULT
+    }
+}
+
 impl EdgePath {
+    pub const DEFAULT: Self = Self {
+        source: (Vec2::ZERO, EdgePosition::Right),
+        target: (Vec2::ZERO, EdgePosition::Left),
+        edge_type: EdgeType::Straight,
+        curvature: CURVATURE,
+        offset: OFFSET,
+    };
+
     pub fn build(self, stroke: impl Into<egui::Stroke>) -> Shape {
         let Self {
             source,
@@ -46,7 +62,9 @@ impl EdgePath {
             offset,
         } = self;
 
+        const FILL: Color32 = Color32::TRANSPARENT;
         let stroke = stroke.into();
+
         let mut builder = BuilderImpl::new().with_svg();
 
         PathBuilder::new(source, target, edge_type, curvature, offset).with(&mut builder);
@@ -83,7 +101,7 @@ impl EdgePath {
                                 QuadraticBezierShape::from_points_stroke(
                                     [from, ctrl, to].convert(),
                                     false,
-                                    Color32::TRANSPARENT,
+                                    FILL,
                                     stroke,
                                 ),
                             ));
@@ -97,7 +115,7 @@ impl EdgePath {
                             shapes.push(Shape::CubicBezier(CubicBezierShape::from_points_stroke(
                                 [from, ctrl1, ctrl2, to].convert(),
                                 false,
-                                Color32::TRANSPARENT,
+                                FILL,
                                 stroke,
                             )));
                         }
@@ -106,7 +124,6 @@ impl EdgePath {
                         }
                     }
                 }
-
                 return shapes.into();
             }
             EdgeType::Curve => {
@@ -120,7 +137,7 @@ impl EdgePath {
                     return Shape::CubicBezier(CubicBezierShape::from_points_stroke(
                         [from, ctrl1, ctrl2, to].convert(),
                         false,
-                        Color32::TRANSPARENT,
+                        FILL,
                         stroke,
                     ));
                 }

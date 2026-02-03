@@ -206,15 +206,18 @@ impl Squircle {
     #[inline]
     pub fn with(self, builder: &mut WithSvg<BuilderImpl>) {
         let Self {
-            h: [_p0, ctrl1, ctrl2, to0],
-            v: [to1, ctrl4, ctrl3, _p1],
+            h,
+            v,
             center,
             radii,
             sweep_angle,
         } = self;
 
+        let [_p0, ctrl1, ctrl2, to0] = h.convert();
+        let [to1, ctrl4, ctrl3, _p1] = v.convert();
+
         // builder.line_to(_p0.convert());
-        builder.cubic_bezier_to(ctrl1.convert(), ctrl2.convert(), to0.convert());
+        builder.cubic_bezier_to(ctrl1, ctrl2, to0);
         builder.arc(
             center.convert(),
             radii.convert(),
@@ -222,6 +225,6 @@ impl Squircle {
             Angle::radians(0.0),
         );
         // builder.line_to(_p1.convert());
-        builder.cubic_bezier_to(ctrl3.convert(), ctrl4.convert(), to1.convert());
+        builder.cubic_bezier_to(ctrl3, ctrl4, to1);
     }
 }

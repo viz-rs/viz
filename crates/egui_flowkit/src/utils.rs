@@ -1,24 +1,16 @@
-use egui::Pos2;
-use lyon_path::math::Point;
-
-pub(crate) trait Convert {
-    type Output;
-
-    fn convert(self) -> Self::Output;
+pub(crate) trait Convert<T> {
+    #[must_use]
+    fn convert(self) -> T;
 }
 
-impl<T: Convert, const N: usize> Convert for [T; N] {
-    type Output = [T::Output; N];
-
-    fn convert(self) -> Self::Output {
-        self.map(T::convert)
+impl<const N: usize, O, I: Convert<O>> Convert<[O; N]> for [I; N] {
+    fn convert(self) -> [O; N] {
+        self.map(I::convert)
     }
 }
 
-impl Convert for Point {
-    type Output = Pos2;
-
-    fn convert(self) -> Self::Output {
-        Pos2::new(self.x, self.y)
+impl Convert<egui::Pos2> for lyon_path::math::Point {
+    fn convert(self) -> egui::Pos2 {
+        egui::Pos2::new(self.x, self.y)
     }
 }

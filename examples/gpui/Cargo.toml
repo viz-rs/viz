@@ -1,15 +1,15 @@
 [package]
-name = "egui_examples"
+name = "gpui_examples"
 publish = false
 edition.workspace = true
 
 [dependencies]
-egui_flowkit.workspace = true
+gpui_flowkit.workspace = true
 
-eframe.workspace = true
-env_logger.workspace = true
+gpui.workspace = true
+core-text.workspace = true
 glam.workspace = true
 
 [[example]]
-name = "egui_canvas"
+name = "gpui_canvas"
 path = "src/canvas.rs"

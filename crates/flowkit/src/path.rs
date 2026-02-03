@@ -10,6 +10,7 @@ use crate::{
     winding_order::WindingOrder,
 };
 
+/// A path builder.
 #[derive(Debug, Clone)]
 pub struct PathBuilder {
     pub points: SmallVec<[Vec2; 2]>,
@@ -228,20 +229,18 @@ impl PathBuilder {
     pub fn with(self, mut builder: &mut WithSvg<BuilderImpl>) {
         match self.edge_type {
             EdgeType::Straight => {
-                if let [from, to] = self.points[..] {
-                    builder.move_to(from.convert());
-                    builder.line_to(to.convert());
-                } else {
+                let [from, to] = self.points[..] else {
                     panic!("Straight path needs tow points.");
-                }
+                };
+                builder.move_to(from.convert());
+                builder.line_to(to.convert());
             }
             EdgeType::Curve => {
-                if let [from, ctrl1, ctrl2, to] = self.points[..] {
-                    builder.move_to(from.convert());
-                    builder.cubic_bezier_to(ctrl1.convert(), ctrl2.convert(), to.convert());
-                } else {
+                let [from, ctrl1, ctrl2, to] = self.points[..] else {
                     panic!("Curve path needs four points.");
-                }
+                };
+                builder.move_to(from.convert());
+                builder.cubic_bezier_to(ctrl1.convert(), ctrl2.convert(), to.convert());
             }
             EdgeType::StraightStep => {
                 for point in self.points {

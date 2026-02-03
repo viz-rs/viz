@@ -1,11 +1,10 @@
-use bevy_math::Vec2;
-use bevy_prototype_lyon::prelude::Geometry;
 use flowkit::{
     CURVATURE, OFFSET,
     edge::{EdgePosition, EdgeType},
     path::PathBuilder,
 };
-use lyon_path::{BuilderImpl, builder::WithSvg};
+use glam::Vec2;
+use lyon_path::BuilderImpl;
 
 pub mod prelude {
     pub use flowkit::corner::{Corner, CornerPathParams};
@@ -49,8 +48,12 @@ impl EdgePath {
     }
 }
 
-impl Geometry<WithSvg<BuilderImpl>> for EdgePath {
-    fn add_geometry(&self, builder: &mut WithSvg<BuilderImpl>) {
-        self.as_path_builder().with(builder);
+impl Into<gpui::PathBuilder> for EdgePath {
+    fn into(self) -> gpui::PathBuilder {
+        let mut builder = BuilderImpl::new().with_svg();
+
+        self.as_path_builder().with(&mut builder);
+
+        builder.into()
     }
 }

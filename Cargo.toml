@@ -23,6 +23,10 @@ flowkit = { path = "crates/flowkit" }
 bevy_flowkit = { path = "crates/bevy_flowkit" }
 bevy_moon = { path = "crates/bevy_moon" }
 
+egui_flowkit = { path = "crates/egui_flowkit" }
+
+gpui_flowkit = { path = "crates/gpui_flowkit" }
+
 # bevy
 bevy_a11y = { version = "0.18.0" }
 bevy_app = { version = "0.18.0" }
@@ -82,7 +86,10 @@ egui = "0.33"
 eframe = "0.33"
 env_logger = { version = "0.11", features = ["auto-color", "humantime"] }
 
-egui_flowkit = { path = "crates/egui_flowkit" }
+# gpui
+gpui = "0.2"
+# https://github.com/zed-industries/zed/issues/47168
+core-text = "=21"
 
 [workspace.lints]
 
