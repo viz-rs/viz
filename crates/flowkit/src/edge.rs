@@ -1,6 +1,9 @@
 use glam::Vec2;
 
 /// Identifies an edge position of a rectangle.
+///
+/// If `N` is `true`, Y is up.
+/// If `N` is `false`, Y is down.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum EdgePosition<const N: bool = true> {
     Top,
