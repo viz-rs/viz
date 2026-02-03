@@ -1,5 +1,6 @@
 use glam::Vec2;
 use lyon_path::{BuilderImpl, builder::WithSvg};
+use smallvec::SmallVec;
 
 use crate::{
     corner::{Corner, CornerPathParams},
@@ -11,7 +12,7 @@ use crate::{
 
 #[derive(Debug, Clone)]
 pub struct PathBuilder {
-    pub points: Vec<Vec2>,
+    pub points: SmallVec<[Vec2; 2]>,
     pub edge_type: EdgeType,
     pub curvature: f32,
     pub offset: f32,
@@ -26,7 +27,7 @@ impl PathBuilder {
         curvature: f32,
         offset: f32,
     ) -> Self {
-        let mut points = Vec::with_capacity(2);
+        let mut points = SmallVec::new_const();
 
         match edge_type {
             EdgeType::Straight => {
@@ -78,7 +79,7 @@ impl PathBuilder {
         source: (Vec2, EdgePosition),
         target: (Vec2, EdgePosition),
         offset: f32,
-    ) -> Vec<Vec2> {
+    ) -> SmallVec<[Vec2; 3]> {
         let (source_pos, source_edge) = source;
         let (target_pos, target_edge) = target;
 
@@ -104,7 +105,7 @@ impl PathBuilder {
         let is_same_edge = !is_adjacent_edge && edges.cmpeq(Vec2::ONE).any();
         let is_same_area = area == new_area;
 
-        let mut points = Vec::with_capacity(3);
+        let mut points = SmallVec::new_const();
 
         points.push(source_pos);
 

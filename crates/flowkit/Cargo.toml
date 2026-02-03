@@ -12,6 +12,7 @@ repository.workspace = true
 [dependencies]
 glam.workspace = true
 lyon_path.workspace = true
+smallvec.workspace = true
 
 [lints]
 workspace = true
