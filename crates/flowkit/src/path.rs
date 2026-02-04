@@ -20,11 +20,8 @@ pub struct PathBuilder {
 }
 
 impl PathBuilder {
-    /// If `flip_y` is `true`, Y-axis is down.
-    /// If `flip_y` is `false`, Y-axis is up.
-    ///
-    /// In Bevy world space, the Y-axis is up.
-    /// In egui and gpui, the Y-axis is down.
+    /// In Bevy world space, the Y-axis is up, should not be flipped.
+    /// In egui and gpui, the Y-axis is down, should be flipped.
     #[inline]
     pub fn new(
         source: EdgePoint,
@@ -95,13 +92,13 @@ impl PathBuilder {
         target: [Vec2; 2],
         offset: f32,
     ) -> SmallVec<[Vec2; 3]> {
-        let [source_pos, source_edge_vec2] = source;
-        let [target_pos, target_edge_vec2] = target;
+        let [source_pos, source_edge] = source;
+        let [target_pos, target_edge] = target;
 
         let (rect_min, rect_max) = (source_pos.min(target_pos), source_pos.max(target_pos));
         let area = visible_area(rect_min, rect_max);
 
-        let (source_offset, target_offset) = (source_edge_vec2 * offset, target_edge_vec2 * offset);
+        let (source_offset, target_offset) = (source_edge * offset, target_edge * offset);
 
         let (source_offset_pos, target_offset_pos) =
             (source_pos + source_offset, target_pos + target_offset);
@@ -114,7 +111,7 @@ impl PathBuilder {
 
         let center = new_rect_min.midpoint(new_rect_max);
 
-        let edges = source_edge_vec2 * target_edge_vec2;
+        let edges = source_edge * target_edge;
         let is_adjacent_edge = edges == Vec2::ZERO;
         let is_same_edge = !is_adjacent_edge && edges.cmpeq(Vec2::ONE).any();
         let is_same_area = area == new_area;
@@ -126,51 +123,36 @@ impl PathBuilder {
         if is_same_edge {
             // same edges
             // adds two corner points
-            let sc = select(
-                source_edge_vec2,
-                source_offset_pos,
-                new_rect_min,
-                new_rect_max,
-            );
-            let tc = select(
-                target_edge_vec2,
-                target_offset_pos,
-                new_rect_min,
-                new_rect_max,
-            );
+            let sc = select(source_edge, source_offset_pos, new_rect_min, new_rect_max);
+            let tc = select(target_edge, target_offset_pos, new_rect_min, new_rect_max);
             points.extend([sc, tc]);
         } else if is_adjacent_edge && is_same_area {
             // adjacent edges and same area
             // adds one corner point
-            let c = select(
-                source_edge_vec2,
-                source_offset_pos,
-                new_rect_min,
-                new_rect_max,
-            );
+            let c = select(source_edge, source_offset_pos, new_rect_min, new_rect_max);
             points.push(c);
         } else {
             // source offset point
             let sc = select(
-                source_edge_vec2,
+                source_edge,
                 source_offset_pos,
                 source_offset_pos.min(center),
                 source_offset_pos.max(center),
             );
             // target offset point
             let tc = select(
-                target_edge_vec2,
+                target_edge,
                 target_offset_pos,
                 target_offset_pos.min(center),
                 target_offset_pos.max(center),
             );
 
             // source middle point
-            let mut sm = select(source_edge_vec2, center, sc.min(center), sc.max(center));
+            let mut sm = select(source_edge, center, sc.min(center), sc.max(center));
             // target middle point
-            let mut tm = select(target_edge_vec2, center, tc.min(center), tc.max(center));
+            let mut tm = select(target_edge, center, tc.min(center), tc.max(center));
 
-            let mut temp = Vec::with_capacity(3);
+            let mut temp = SmallVec::<[Vec2; 3]>::new_const();
 
             temp.push(sc);
 
@@ -178,8 +160,8 @@ impl PathBuilder {
                 // adjacent edges
                 // adds a middle corner point
                 // keeps value by multiplying with edge vector length
-                sm *= source_edge_vec2.abs();
-                tm *= target_edge_vec2.abs();
+                sm *= source_edge.abs();
+                tm *= target_edge.abs();
 
                 temp.push(sm + tm);
             } else {
@@ -267,6 +249,8 @@ impl PathBuilder {
     }
 }
 
+/// In Bevy world space, the Y-axis is up, should not be flipped.
+/// In egui and gpui, the Y-axis is down, should be flipped.
 impl From<(EdgePath, bool)> for PathBuilder {
     fn from((path, flip_y): (EdgePath, bool)) -> Self {
         Self::new(
