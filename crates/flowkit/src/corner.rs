@@ -204,7 +204,7 @@ pub struct Squircle {
 
 impl Squircle {
     #[inline]
-    pub fn with(self, builder: &mut WithSvg<BuilderImpl>) {
+    pub fn with_svg(self, builder: &mut WithSvg<BuilderImpl>) {
         let Self {
             h,
             v,

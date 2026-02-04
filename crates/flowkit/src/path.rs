@@ -214,7 +214,7 @@ impl PathBuilder {
                     Corner::calculate(prev, current, next),
                     WindingOrder::calculate(prev, current, next),
                 )
-                .with(builder);
+                .with_svg(builder);
         }
 
         builder.line_to(points[len - 1].convert());
