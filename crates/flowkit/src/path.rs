@@ -11,34 +11,42 @@ use crate::{
 };
 
 /// A path builder.
-///
-/// If `Y` is `true`, Y-axis is up.
-/// If `Y` is `false`, Y-axis is down.
-///
-/// In Bevy world space, the Y-axis is up.
-/// In egui and gpui, the Y-axis is down.
 #[derive(Debug, Clone)]
-pub struct PathBuilder<const Y: bool = true> {
+pub struct PathBuilder {
     pub points: SmallVec<[Vec2; 2]>,
     pub edge_type: EdgeType,
     pub curvature: f32,
     pub offset: f32,
 }
 
-impl<const Y: bool> PathBuilder<Y> {
+impl PathBuilder {
+    /// If `flip_y` is `true`, Y-axis is down.
+    /// If `flip_y` is `false`, Y-axis is up.
+    ///
+    /// In Bevy world space, the Y-axis is up.
+    /// In egui and gpui, the Y-axis is down.
     #[inline]
     pub fn new(
-        source: EdgePoint<Y>,
-        target: EdgePoint<Y>,
+        source: EdgePoint,
+        target: EdgePoint,
         edge_type: EdgeType,
         curvature: f32,
         offset: f32,
+        flip_y: bool,
     ) -> Self {
+        let mut source = [source.0, source.1.as_vec2()];
+        let mut target = [target.0, target.1.as_vec2()];
+
+        if flip_y {
+            source[1].y *= -1.0;
+            target[1].y *= -1.0;
+        }
+
         let mut points = SmallVec::new_const();
 
         match edge_type {
             EdgeType::Straight => {
-                points.extend([source.0, target.0]);
+                points.extend([source[0], target[0]]);
             }
             EdgeType::Curve => {
                 points.extend(Self::calculate_control_points(
@@ -60,18 +68,18 @@ impl<const Y: bool> PathBuilder<Y> {
 
     #[inline]
     pub fn calculate_control_points(
-        source: EdgePoint<Y>,
-        target: EdgePoint<Y>,
+        source: [Vec2; 2],
+        target: [Vec2; 2],
         curvature: f32,
         offset: f32,
     ) -> [Vec2; 4] {
-        let (source_pos, source_edge) = source;
-        let (target_pos, target_edge) = target;
+        let [source_pos, source_edge] = source;
+        let [target_pos, target_edge] = target;
 
         let source_control_point =
-            calculate_control_point::<Y>(source_pos, target_pos, source_edge, curvature, offset);
+            calculate_control_point(source_pos, target_pos, source_edge, curvature, offset);
         let target_control_point =
-            calculate_control_point::<Y>(target_pos, source_pos, target_edge, curvature, offset);
+            calculate_control_point(target_pos, source_pos, target_edge, curvature, offset);
 
         [
             source_pos,
@@ -83,17 +91,16 @@ impl<const Y: bool> PathBuilder<Y> {
 
     #[inline]
     pub fn calculate_steps(
-        source: EdgePoint<Y>,
-        target: EdgePoint<Y>,
+        source: [Vec2; 2],
+        target: [Vec2; 2],
         offset: f32,
     ) -> SmallVec<[Vec2; 3]> {
-        let (source_pos, source_edge) = source;
-        let (target_pos, target_edge) = target;
+        let [source_pos, source_edge_vec2] = source;
+        let [target_pos, target_edge_vec2] = target;
 
         let (rect_min, rect_max) = (source_pos.min(target_pos), source_pos.max(target_pos));
         let area = visible_area(rect_min, rect_max);
 
-        let (source_edge_vec2, target_edge_vec2) = (source_edge.as_vec2(), target_edge.as_vec2());
         let (source_offset, target_offset) = (source_edge_vec2 * offset, target_edge_vec2 * offset);
 
         let (source_offset_pos, target_offset_pos) =
@@ -260,20 +267,21 @@ impl<const Y: bool> PathBuilder<Y> {
     }
 }
 
-impl<const Y: bool> From<EdgePath<Y>> for PathBuilder<Y> {
-    fn from(path: EdgePath<Y>) -> Self {
+impl From<(EdgePath, bool)> for PathBuilder {
+    fn from((path, flip_y): (EdgePath, bool)) -> Self {
         Self::new(
             path.source,
             path.target,
             path.edge_type,
             path.curvature,
             path.offset,
+            flip_y,
         )
     }
 }
 
-impl<const Y: bool> From<PathBuilder<Y>> for WithSvg<BuilderImpl> {
-    fn from(path: PathBuilder<Y>) -> Self {
+impl From<PathBuilder> for WithSvg<BuilderImpl> {
+    fn from(path: PathBuilder) -> Self {
         let mut builder = BuilderImpl::new().with_svg();
         path.with_svg(&mut builder);
         builder

@@ -1,14 +1,10 @@
-use lyon_path::BuilderImpl;
+use lyon_path::{BuilderImpl, builder::WithSvg};
 
-pub use flowkit::corner::{Corner, CornerPathParams};
-pub use flowkit::edge::EdgeType;
-use lyon_path::builder::WithSvg;
-
-// Y-axis should be down.
-pub type EdgeAnchor = flowkit::edge::EdgeAnchor<false>;
-pub type EdgePoint = flowkit::edge::EdgePoint<false>;
-pub type EdgePath = flowkit::edge::EdgePath<false>;
-pub type PathBuilder = flowkit::path::PathBuilder<false>;
+pub use flowkit::{
+    corner::{Corner, CornerPathParams},
+    edge::{EdgeAnchor, EdgePath, EdgePoint, EdgeType},
+    path::PathBuilder,
+};
 
 /// Draws a connection, the `EdgePath` wrapper.
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -27,8 +23,8 @@ impl From<EdgePath> for Connection {
 }
 
 impl From<Connection> for gpui::PathBuilder {
-    fn from(conn: Connection) -> Self {
-        let internal_builder = PathBuilder::from(conn.0);
+    fn from(value: Connection) -> Self {
+        let internal_builder = PathBuilder::from((value.0, true));
         let builder: WithSvg<BuilderImpl> = internal_builder.into();
         builder.into()
     }

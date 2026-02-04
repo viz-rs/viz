@@ -25,7 +25,7 @@ impl From<EdgePath> for Connection {
 
 impl Geometry<WithSvg<BuilderImpl>> for Connection {
     fn add_geometry(&self, builder: &mut WithSvg<BuilderImpl>) {
-        let internal_builder = PathBuilder::from(self.0);
+        let internal_builder = PathBuilder::from((self.0, false));
         internal_builder.with_svg(builder);
     }
 }

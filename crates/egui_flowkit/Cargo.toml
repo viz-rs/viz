@@ -2,7 +2,7 @@
 name = "egui_flowkit"
 description = "A UI workflow library for egui"
 keywords = ["egui", "workflow", "flow"]
-version = "0.3.0"
+version = "0.3.1"
 authors.workspace = true
 edition.workspace = true
 homepage.workspace = true
@@ -13,7 +13,7 @@ repository.workspace = true
 default = []
 
 [dependencies]
-flowkit = { path = "../flowkit", version = "0.4.0" }
+flowkit = { path = "../flowkit", version = "0.4.1" }
 
 egui.workspace = true
 glam.workspace = true

@@ -27,6 +27,8 @@ egui_flowkit = { path = "crates/egui_flowkit" }
 
 gpui_flowkit = { path = "crates/gpui_flowkit" }
 
+makepad_flowkit = { path = "crates/makepad_flowkit" }
+
 # bevy
 bevy_a11y = { version = "0.18.0" }
 bevy_app = { version = "0.18.0" }
@@ -90,6 +92,10 @@ env_logger = { version = "0.11", features = ["auto-color", "humantime"] }
 gpui = "0.2"
 # https://github.com/zed-industries/zed/issues/47168
 core-text = "=21"
+
+# makepad
+makepad-widgets = { git = "https://github.com/makepad/makepad", branch = "dev", features = ["serde"] }
+makepad-vector = { git = "https://github.com/makepad/makepad", branch = "dev" }
 
 [workspace.lints]
 

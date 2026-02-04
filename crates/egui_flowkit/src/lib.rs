@@ -2,19 +2,15 @@ use egui::{
     Color32, Shape,
     epaint::{CubicBezierShape, QuadraticBezierShape},
 };
-use flowkit::path::PathBuilder;
 use lyon_path::{BuilderImpl, Event, builder::WithSvg};
 
 pub use lyon_tessellation::StrokeOptions;
 
-pub use flowkit::corner::{Corner, CornerPathParams};
-pub use flowkit::edge::EdgeType;
-
-// Y-axis should be down.
-pub type EdgeAnchor = flowkit::edge::EdgeAnchor<false>;
-pub type EdgePoint = flowkit::edge::EdgePoint<false>;
-pub type EdgePath = flowkit::edge::EdgePath<false>;
-pub type Pathbuilder = flowkit::path::PathBuilder<false>;
+pub use flowkit::{
+    corner::{Corner, CornerPathParams},
+    edge::{EdgeAnchor, EdgePath, EdgePoint, EdgeType},
+    path::PathBuilder,
+};
 
 use crate::{
     mesh::{Mode, Tessellator},
@@ -49,7 +45,7 @@ impl Connection {
         let stroke = stroke.into();
         let edge_type = self.0.edge_type;
 
-        let internal_builder = PathBuilder::from(self.0);
+        let internal_builder = PathBuilder::from((self.0, true));
         let builder: WithSvg<BuilderImpl> = internal_builder.into();
         let path = builder.build();
 
@@ -130,7 +126,7 @@ impl Connection {
     }
 
     pub fn build_with(self, mode: Mode<StrokeOptions>, tess: &mut Tessellator) -> Shape {
-        let internal_builder = PathBuilder::from(self.0);
+        let internal_builder = PathBuilder::from((self.0, true));
         let builder: WithSvg<BuilderImpl> = internal_builder.into();
         let path = builder.build();
 
