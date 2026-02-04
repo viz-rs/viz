@@ -22,10 +22,14 @@ impl From<EdgePath> for Connection {
     }
 }
 
+impl From<Connection> for WithSvg<BuilderImpl> {
+    fn from(value: Connection) -> Self {
+        PathBuilder::from((value.0, true)).into()
+    }
+}
+
 impl From<Connection> for gpui::PathBuilder {
     fn from(value: Connection) -> Self {
-        let internal_builder = PathBuilder::from((value.0, true));
-        let builder: WithSvg<BuilderImpl> = internal_builder.into();
-        builder.into()
+        WithSvg::<BuilderImpl>::from(value).into()
     }
 }

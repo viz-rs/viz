@@ -126,8 +126,7 @@ impl Connection {
     }
 
     pub fn build_with(self, mode: Mode<StrokeOptions>, tess: &mut Tessellator) -> Shape {
-        let internal_builder = PathBuilder::from((self.0, true));
-        let builder: WithSvg<BuilderImpl> = internal_builder.into();
+        let builder: WithSvg<BuilderImpl> = PathBuilder::from((self.0, true)).into();
         let path = builder.build();
 
         let mut buffers = VertexBuffers::new();
