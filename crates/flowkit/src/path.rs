@@ -43,15 +43,15 @@ impl PathBuilder {
 
         match edge_type {
             EdgeType::Straight => {
-                points.extend([source[0], target[0]]);
+                points.extend_from_slice(&[source[0], target[0]]);
             }
             EdgeType::Curve => {
-                points.extend(Self::calculate_control_points(
+                points.extend_from_slice(&Self::calculate_control_points(
                     source, target, curvature, offset,
                 ));
             }
             EdgeType::StraightStep | EdgeType::SmoothStep => {
-                points.extend(Self::calculate_steps(source, target, offset));
+                points.extend_from_slice(&Self::calculate_steps(source, target, offset));
             }
         }
 
@@ -125,7 +125,7 @@ impl PathBuilder {
             // adds two corner points
             let sc = select(source_edge, source_offset_pos, new_rect_min, new_rect_max);
             let tc = select(target_edge, target_offset_pos, new_rect_min, new_rect_max);
-            points.extend([sc, tc]);
+            points.extend_from_slice(&[sc, tc]);
         } else if is_adjacent_edge && is_same_area {
             // adjacent edges and same area
             // adds one corner point
@@ -167,14 +167,13 @@ impl PathBuilder {
             } else {
                 // parallel edges
                 // adds two middle corner points
-                temp.push(sm);
-                temp.push(tm);
+                temp.extend_from_slice(&[sm, tm]);
             }
 
             temp.push(tc);
             temp.dedup();
 
-            points.extend(temp);
+            points.extend_from_slice(&temp);
         }
 
         points.push(target_pos);
@@ -183,7 +182,7 @@ impl PathBuilder {
     }
 
     #[inline]
-    fn smooth_with(self, builder: &mut WithSvg<BuilderImpl>) {
+    fn smooth_with_svg(self, builder: &mut WithSvg<BuilderImpl>) {
         let Self { points, offset, .. } = self;
         let len = points.len();
 
@@ -243,7 +242,7 @@ impl PathBuilder {
                 }
             }
             EdgeType::SmoothStep => {
-                self.smooth_with(&mut builder);
+                self.smooth_with_svg(&mut builder);
             }
         }
     }

@@ -18,7 +18,17 @@ A universal UI workflow library.
 
 * **Simple**: easy to integrate into other frameworks
 
+  - [bevy_flowkit]
+  - [egui_flowkit]
+  - [gpui_flowkit]
+  - [makepad_flowkit]
+
 * **SVG**: support SVG's path output
 
 [`EdgeType`]: https://docs.rs/flowkit/latest/flowkit/edge/enum.EdgeType.html
 [`squircle`]: https://www.figma.com/blog/desperately-seeking-squircles/
+
+[bevy_flowkit]: https://docs.rs/bevy_flowkit
+[egui_flowkit]: https://docs.rs/egui_flowkit
+[gpui_flowkit]: https://docs.rs/gpui_flowkit
+[makepad_flowkit]: https://docs.rs/makepad_flowkit
