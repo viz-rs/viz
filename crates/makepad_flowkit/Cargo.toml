@@ -14,13 +14,9 @@ default = []
 
 [dependencies]
 flowkit = { path = "../flowkit", version = "0.4.2" }
+makepad_tessellation = { path = "../makepad_tessellation", version = "0.1.0" }
 
-makepad-widgets.workspace = true
-makepad-vector.workspace = true
-glam.workspace = true
 lyon_path.workspace = true
-lyon_tessellation.workspace = true
-tracing.workspace = true
 
 [lints]
 workspace = true

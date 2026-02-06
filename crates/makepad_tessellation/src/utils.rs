@@ -1,7 +1,7 @@
 use makepad_vector::geometry::Point;
 
 /// Converts a type to another type.
-pub(crate) trait Convert<T> {
+pub trait Convert<T> {
     #[must_use]
     fn convert(self) -> T;
 }

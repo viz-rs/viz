@@ -28,6 +28,7 @@ egui_flowkit = { path = "crates/egui_flowkit" }
 gpui_flowkit = { path = "crates/gpui_flowkit" }
 
 makepad_flowkit = { path = "crates/makepad_flowkit" }
+makepad_tessellation = { path = "crates/makepad_tessellation" }
 
 # bevy
 bevy_a11y = { version = "0.18.0" }

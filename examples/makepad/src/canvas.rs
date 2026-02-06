@@ -1,7 +1,5 @@
-use makepad_flowkit::{
-    mesh::{Mode, Tessellator},
-    *,
-};
+use makepad_flowkit::*;
+use makepad_tessellation::prelude::*;
 use makepad_widgets::*;
 
 // Fixme: drag and drop nodes

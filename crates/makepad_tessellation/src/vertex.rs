@@ -3,7 +3,7 @@ use lyon_tessellation::{
 };
 use makepad_vector::geometry::Point;
 
-use crate::Convert;
+use crate::utils::Convert;
 
 /// The index type of a mesh.
 type IndexType = u32;
