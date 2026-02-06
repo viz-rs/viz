@@ -35,7 +35,7 @@ impl Connection {
 
         let mut buffers = VertexBuffers::new();
 
-        tess.stroke(&path, mode, &mut buffers);
+        tess.stroke(path, mode, &mut buffers);
 
         buffers
     }
@@ -95,6 +95,32 @@ impl From<Connection> for Path {
     }
 }
 
+/// Draws a connection with indices and vertices.
+///
+/// How does it work?
+///
+/// 1. Extracts 4 vertices' positions from two triangles.
+///
+/// ```
+/// ----------------- | ------------- | ------------
+/// `quad_2d.indices` | `0 1 2 2 3 0` |
+/// `buffers.indices` | `3 2 0 3 0 1` | `d c a d a b`
+///
+/// 0  1  a  b
+///  []    []
+/// 3  2  d  c
+///
+/// ----- | ------ | ----------- | -------
+/// index | indice |   vertex    | corner
+///   0   |   a    | vertices[a] | top-left
+///   1   |   b    | vertices[b] | top-right
+///   2   |   c    | vertices[c] | bottom-right
+///   3   |   d    | vertices[d] | bottom-left
+///
+/// 2. Draws two lines:
+/// a -> c
+/// b -> d
+/// ```
 pub fn draw_with(
     cx: &mut Cx2d,
     draw_line: &mut DrawLine,
@@ -102,53 +128,22 @@ pub fn draw_with(
     color: Vec4,
     width: f64,
 ) {
-    // c  f   0 1
-    // a  b   3 2
-    // a b c d e f
-    // 3 2 0 3 0 1: buffers.indices order
-    // 0 1 2 2 3 0: quad_2d.indices order
-    // gets 4 corners:
-    // c: top-left
-    // f: top-right
-    // a: bottom-left
-    // b: bottom-right
-    // draw line from `top-right` to `bottom-left`: a -> f
-    // draw line from `top-left` to `bottom-right`: c -> b
-    for i in buffers.indices.chunks(6) {
-        let a = &buffers.vertices[i[0] as usize];
-        let b = &buffers.vertices[i[1] as usize];
-        let c = &buffers.vertices[i[2] as usize];
-        // let d = &buffers.vertices[i[3] as usize];
-        // let e = &buffers.vertices[i[4] as usize];
-        let f = &buffers.vertices[i[5] as usize];
-
-        let a = Vec2d {
-            x: a.pos.x,
-            y: a.pos.y,
-        };
-        let b = Vec2d {
-            x: b.pos.x,
-            y: b.pos.y,
-        };
-        let c = Vec2d {
-            x: c.pos.x,
-            y: c.pos.y,
-        };
-        // let d = Vec2d {
-        //     x: d.pos.x,
-        //     y: d.pos.y,
-        // };
-        // let e = Vec2d {
-        //     x: e.pos.x,
-        //     y: e.pos.y,
-        // };
-        let f = Vec2d {
-            x: f.pos.x,
-            y: f.pos.y,
+    for indices in buffers.indices.chunks(6) {
+        let [d, c, a, _, _, b] = indices[..] else {
+            break;
         };
 
-        draw_line.draw_line_abs(cx, a, f, color, width);
+        let av = buffers.vertices[a as usize];
+        let bv = buffers.vertices[b as usize];
+        let cv = buffers.vertices[c as usize];
+        let dv = buffers.vertices[d as usize];
 
-        draw_line.draw_line_abs(cx, c, b, color, width);
+        let ap = Vec2d { x: av.x, y: av.y };
+        let bp = Vec2d { x: bv.x, y: bv.y };
+        let cp = Vec2d { x: cv.x, y: cv.y };
+        let dp = Vec2d { x: dv.x, y: dv.y };
+
+        draw_line.draw_line_abs(cx, ap, cp, color, width);
+        draw_line.draw_line_abs(cx, bp, dp, color, width);
     }
 }
