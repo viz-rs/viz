@@ -4,7 +4,7 @@ use egui::{
 };
 use lyon_path::{BuilderImpl, Event, builder::WithSvg};
 
-pub use lyon_tessellation::StrokeOptions;
+pub use lyon_tessellation::{StrokeOptions, StrokeTessellator};
 
 pub use flowkit::{
     corner::{Corner, CornerPathParams},
@@ -23,7 +23,7 @@ mod utils;
 pub mod mesh;
 pub mod vertex;
 
-/// Draws a connection, the `EdgePath` wrapper.
+/// An `EdgePath` wrapper, drawing the connection.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Connection(EdgePath);
 
@@ -45,8 +45,7 @@ impl Connection {
         let stroke = stroke.into();
         let edge_type = self.0.edge_type;
 
-        let internal_builder = PathBuilder::from((self.0, true));
-        let builder: WithSvg<BuilderImpl> = internal_builder.into();
+        let builder: WithSvg<BuilderImpl> = PathBuilder::from((self.0, true)).into();
         let path = builder.build();
 
         let mut events = path.iter().filter(|&e| match e {
@@ -125,7 +124,11 @@ impl Connection {
         Shape::Noop
     }
 
-    pub fn build_with(self, mode: Mode<StrokeOptions>, tess: &mut Tessellator) -> Shape {
+    pub fn build_with(
+        self,
+        mode: Mode<StrokeOptions>,
+        tess: &mut Tessellator<StrokeTessellator>,
+    ) -> Shape {
         let builder: WithSvg<BuilderImpl> = PathBuilder::from((self.0, true)).into();
         let path = builder.build();
 

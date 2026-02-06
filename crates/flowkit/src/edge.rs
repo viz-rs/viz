@@ -44,11 +44,11 @@ pub type EdgePoint = (Vec2, EdgeAnchor);
 /// Generates an edge path.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct EdgePath {
+    pub offset: f32,
+    pub curvature: f32,
     pub source: EdgePoint,
     pub target: EdgePoint,
     pub edge_type: EdgeType,
-    pub curvature: f32,
-    pub offset: f32,
 }
 
 impl Default for EdgePath {
@@ -59,10 +59,10 @@ impl Default for EdgePath {
 
 impl EdgePath {
     pub const DEFAULT: Self = Self {
+        offset: OFFSET,
+        curvature: CURVATURE,
+        edge_type: EdgeType::Straight,
         source: (Vec2::ZERO, EdgeAnchor::Right),
         target: (Vec2::ZERO, EdgeAnchor::Left),
-        edge_type: EdgeType::Straight,
-        curvature: CURVATURE,
-        offset: OFFSET,
     };
 }

@@ -6,3 +6,5 @@
 [![Docs](https://docs.rs/bevy_flowkit/badge.svg)](https://docs.rs/bevy_flowkit/latest/bevy_flowkit/)
 
 A UI workflow library for Bevy Engine.
+
+Neat, beautiful, and easy to use.

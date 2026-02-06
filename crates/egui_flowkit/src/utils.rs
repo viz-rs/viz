@@ -1,3 +1,4 @@
+/// Converts a type to another type.
 pub(crate) trait Convert<T> {
     #[must_use]
     fn convert(self) -> T;

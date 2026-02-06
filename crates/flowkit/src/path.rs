@@ -13,15 +13,20 @@ use crate::{
 /// A path builder.
 #[derive(Debug, Clone)]
 pub struct PathBuilder {
-    pub points: SmallVec<[Vec2; 2]>,
-    pub edge_type: EdgeType,
-    pub curvature: f32,
     pub offset: f32,
+    pub curvature: f32,
+    pub edge_type: EdgeType,
+    pub points: SmallVec<[Vec2; 2]>,
 }
 
 impl PathBuilder {
-    /// In Bevy world space, the Y-axis is up, should not be flipped.
-    /// In egui and gpui, the Y-axis is down, should be flipped.
+    /// If `Y-axis` is down, should set `flip_y` to `true`.
+    ///
+    /// ```
+    /// ---- | -------------------
+    /// Up   | Bevy world space
+    /// Down | egui, gpui, makepad
+    /// ```
     #[inline]
     pub fn new(
         source: EdgePoint,
@@ -194,9 +199,10 @@ impl PathBuilder {
 
         // @todo(fundon): should be a configuration
         let smoothness = 0.6;
+        let half_offset = offset * 0.5;
 
-        for items in points.windows(3) {
-            let [prev, current, next] = items[..] else {
+        for window in points.windows(3) {
+            let [prev, current, next] = window[..] else {
                 break;
             };
 
@@ -205,7 +211,7 @@ impl PathBuilder {
 
             // 5.0 by default
             // @todo(fundon): should be a configuration
-            let corner_radius = max_radius.min(offset * 0.5);
+            let corner_radius = max_radius.min(half_offset);
 
             CornerPathParams::new(corner_radius, max_radius, smoothness)
                 .squircle(
@@ -248,9 +254,14 @@ impl PathBuilder {
     }
 }
 
-/// In Bevy world space, the Y-axis is up, should not be flipped.
-/// In egui and gpui, the Y-axis is down, should be flipped.
 impl From<(EdgePath, bool)> for PathBuilder {
+    /// If `Y-axis` is down, should set `flip_y` to `true`.
+    ///
+    /// ```
+    /// ---- | -------------------
+    /// Up   | Bevy world space
+    /// Down | egui, gpui, makepad
+    /// ```
     fn from((path, flip_y): (EdgePath, bool)) -> Self {
         Self::new(
             path.source,

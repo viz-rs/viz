@@ -1,4 +1,3 @@
-use egui::{Color32, Mesh, TextureId};
 use lyon_path::Path;
 use lyon_tessellation::{
     BuffersBuilder, FillOptions, FillTessellator, StrokeOptions, StrokeTessellator,
@@ -6,11 +5,10 @@ use lyon_tessellation::{
 
 use crate::vertex::{VertexBuffers, VertexConstructor};
 
-/// A `FillOptions` or `StrokeOptions` wrapper with a color.
+/// A `FillOptions` or `StrokeOptions`.
 #[derive(Copy, Clone, Default, Debug, PartialEq)]
 pub struct Mode<T> {
     pub options: T,
-    pub color: Color32,
 }
 
 /// A `FillTessellator` or `StrokeTessellator` wrapper.
@@ -26,23 +24,15 @@ impl<T: Default> Default for Tessellator<T> {
     }
 }
 
-impl Tessellator<()> {
-    pub fn build_mesh(buffers: VertexBuffers) -> Mesh {
-        Mesh {
-            indices: buffers.indices,
-            vertices: buffers.vertices,
-            texture_id: TextureId::default(),
-        }
-    }
-}
+impl Tessellator<()> {}
 
 impl Tessellator<FillTessellator> {
     pub fn fill(&mut self, path: &Path, mode: Mode<FillOptions>, buffers: &mut VertexBuffers) {
-        let Mode { options, color } = mode;
+        let Mode { options } = mode;
         if let Err(e) = self.inner.tessellate_path(
             path,
             &options,
-            &mut BuffersBuilder::new(buffers, VertexConstructor { color }),
+            &mut BuffersBuilder::new(buffers, VertexConstructor),
         ) {
             tracing::error!("FillTessellator error: {:?}", e);
         }
@@ -51,11 +41,11 @@ impl Tessellator<FillTessellator> {
 
 impl Tessellator<StrokeTessellator> {
     pub fn stroke(&mut self, path: &Path, mode: Mode<StrokeOptions>, buffers: &mut VertexBuffers) {
-        let Mode { options, color } = mode;
+        let Mode { options } = mode;
         if let Err(e) = self.inner.tessellate_path(
             path,
             &options,
-            &mut BuffersBuilder::new(buffers, VertexConstructor { color }),
+            &mut BuffersBuilder::new(buffers, VertexConstructor),
         ) {
             tracing::error!("StrokeTessellator error: {:?}", e);
         }

@@ -7,23 +7,25 @@
 
 A universal UI workflow library.
 
+Neat, beautiful, and easy to use.
+
 ## Features
 
-* **Path**: support multiple kinds of [`EdgeType`]s:
+* Support multiple kinds of [`EdgeType`]s:
 
   - **SmoothStep**: smoothing and rounding corners by the [`squircle`]
   - **StraightStep**: straight steps
   - **Straight**: a straight line
   - **Curve**: a bezier curve
 
-* **Simple**: easy to integrate into other frameworks
+* Adapt to multiple frameworks
 
   - [bevy_flowkit]
   - [egui_flowkit]
   - [gpui_flowkit]
   - [makepad_flowkit]
 
-* **SVG**: support SVG's path output
+* Support SVG's path output
 
 [`EdgeType`]: https://docs.rs/flowkit/latest/flowkit/edge/enum.EdgeType.html
 [`squircle`]: https://www.figma.com/blog/desperately-seeking-squircles/

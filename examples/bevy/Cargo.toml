@@ -4,7 +4,7 @@ publish = false
 edition.workspace = true
 
 [dependencies]
-bevy = { version = "0.18.0", default-features = true, features = ["pan_camera"] }
+bevy = { version = "0.18.0", default-features = false, features = ["pan_camera", "2d"] }
 
 bevy_flowkit.workspace = true
 bevy_moon.workspace = true

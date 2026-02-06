@@ -44,6 +44,12 @@ Viz is a visual creative space.
   cargo run --example gpui_canvas
   ```
 
+* [makepad canvas](examples/makepad/src/canvas.rs): A simple flow chat for makepad.
+
+  ```console
+  cargo run --example makepad_canvas
+  ```
+
 ## License
 
 Viz is free, open source and permissively licensed!

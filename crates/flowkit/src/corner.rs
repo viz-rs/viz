@@ -213,10 +213,10 @@ impl Squircle {
             sweep_angle,
         } = self;
 
-        let [_p0, ctrl1, ctrl2, to0] = h.convert();
-        let [to1, ctrl4, ctrl3, _p1] = v.convert();
+        let [p0, ctrl1, ctrl2, to0] = h.convert();
+        let [to1, ctrl4, ctrl3, p1] = v.convert();
 
-        // builder.line_to(_p0.convert());
+        builder.line_to(p0);
         builder.cubic_bezier_to(ctrl1, ctrl2, to0);
         builder.arc(
             center.convert(),
@@ -224,7 +224,7 @@ impl Squircle {
             Angle::radians(sweep_angle),
             Angle::radians(0.0),
         );
-        // builder.line_to(_p1.convert());
+        builder.line_to(p1);
         builder.cubic_bezier_to(ctrl3, ctrl4, to1);
     }
 }

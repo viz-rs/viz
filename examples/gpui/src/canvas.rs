@@ -1,7 +1,7 @@
 use gpui::{
     AppContext, Application, Context, Hsla, InteractiveElement, IntoElement, ParentElement,
-    PathBuilder, PathStyle, Render, StrokeOptions, Styled, Window, WindowOptions, canvas, div,
-    hsla, px, rgb, white,
+    PathBuilder, PathStyle, Render, SharedString, StrokeOptions, Styled, TitlebarOptions, Window,
+    WindowOptions, canvas, div, hsla, px, rgb, white,
 };
 use gpui_flowkit::{Connection, EdgeAnchor, EdgePath, EdgeType};
 
@@ -61,11 +61,11 @@ impl Render for FlowkitCanvas {
                 3,
                 EdgePath {
                     source: (
-                        glam::Vec2::new(-0.5, 0.0) * glam::Vec2::new(100.0, 100.0),
-                        EdgeAnchor::Left,
+                        glam::Vec2::new(0.25, 0.5) * glam::Vec2::new(100.0, 100.0),
+                        EdgeAnchor::Bottom,
                     ),
                     target: (
-                        glam::Vec2::new(0.0, -0.5) * glam::Vec2::new(100.0, 100.0),
+                        glam::Vec2::new(-0.25, -0.5) * glam::Vec2::new(100.0, 100.0),
                         EdgeAnchor::Top,
                     ),
                     edge_type: EdgeType::Curve,
@@ -100,20 +100,14 @@ impl Render for FlowkitCanvas {
                         for (source_id, target_id, edge) in edges {
                             let source_shape_pos = positions[source_id];
                             let target_shape_pos = positions[target_id];
-                            let (source_offset, source_edge_pos) = edge.source;
-                            let (target_offset, target_edge_pos) = edge.target;
+                            let (source_offset, source_edge) = edge.source;
+                            let (target_offset, target_edge) = edge.target;
                             let source_pos = source_shape_pos + source_offset;
                             let target_pos = target_shape_pos + target_offset;
 
                             let connection: Connection = EdgePath {
-                                source: (
-                                    glam::Vec2::new(source_pos.x, source_pos.y),
-                                    source_edge_pos,
-                                ),
-                                target: (
-                                    glam::Vec2::new(target_pos.x, target_pos.y),
-                                    target_edge_pos,
-                                ),
+                                source: (glam::Vec2::new(source_pos.x, source_pos.y), source_edge),
+                                target: (glam::Vec2::new(target_pos.x, target_pos.y), target_edge),
                                 edge_type: edge.edge_type,
                                 ..Default::default()
                             }
@@ -199,6 +193,10 @@ fn main() {
         cx.open_window(
             WindowOptions {
                 focus: true,
+                titlebar: Some(TitlebarOptions {
+                    title: Some(SharedString::new_static("gpui Flowkit Canvas")),
+                    ..Default::default()
+                }),
                 ..Default::default()
             },
             |window, cx| cx.new(|cx| FlowkitCanvas::new(window, cx)),

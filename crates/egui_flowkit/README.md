@@ -7,6 +7,8 @@
 
 A UI workflow library for egui.
 
+Neat, beautiful, and easy to use.
+
 > Note: The mesh part of `egui_flowkit` is inspired by the [bevy_prototype_lyon] and [cavalier_contours].
 
 [bevy_prototype_lyon]: https://docs.rs/bevy_prototype_lyon/

@@ -7,7 +7,7 @@ pub use flowkit::{
     path::PathBuilder,
 };
 
-/// Draws a connection, the `EdgePath` wrapper.
+/// An `EdgePath` wrapper, drawing the connection.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Connection(EdgePath);
 

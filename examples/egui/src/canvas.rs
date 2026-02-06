@@ -4,7 +4,7 @@ use eframe::egui::{
 };
 
 use egui_flowkit::{
-    Connection, EdgeAnchor, EdgePath, EdgeType, StrokeOptions,
+    Connection, EdgeAnchor, EdgePath, EdgeType, StrokeOptions, StrokeTessellator,
     mesh::{Mode, Tessellator},
 };
 
@@ -35,13 +35,13 @@ fn main() -> eframe::Result {
 }
 
 struct FlowkitCanvas {
-    paint_bezier: PaintBezier,
+    paint_connections: PaintConnections,
 }
 
 impl Default for FlowkitCanvas {
     fn default() -> Self {
         Self {
-            paint_bezier: PaintBezier::default(),
+            paint_connections: PaintConnections::default(),
         }
     }
 }
@@ -49,28 +49,26 @@ impl Default for FlowkitCanvas {
 impl eframe::App for FlowkitCanvas {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
-            self.paint_bezier.ui(ui);
+            self.paint_connections.ui(ui);
         });
     }
 }
 
-pub struct PaintBezier {
+pub struct PaintConnections {
     shapes: [Pos2; 4],
 
     edges: [Edge; 4],
 
-    /// Stroke for Bézier curve.
     stroke: Stroke,
 
-    /// Fill for Bézier curve.
     fill: Color32,
 
-    tess: Tessellator,
+    tess: Tessellator<StrokeTessellator>,
 
     mesh: bool,
 }
 
-impl Default for PaintBezier {
+impl Default for PaintConnections {
     fn default() -> Self {
         Self {
             shapes: [
@@ -114,8 +112,8 @@ impl Default for PaintBezier {
                         EdgeAnchor::Right,
                     ),
                     target: (
-                        Vec2::new(0.0, 0.5) * Vec2::new(50.0, 50.0),
-                        EdgeAnchor::Bottom,
+                        Vec2::new(0.0, -0.5) * Vec2::new(50.0, 50.0),
+                        EdgeAnchor::Top,
                     ),
                     edge_type: EdgeType::StraightStep,
                 },
@@ -142,7 +140,7 @@ impl Default for PaintBezier {
     }
 }
 
-impl PaintBezier {
+impl PaintConnections {
     pub fn ui(&mut self, ui: &mut Ui) {
         self.ui_control(ui);
 
@@ -239,15 +237,15 @@ impl PaintBezier {
                 let source_translation = self.shapes[source_id];
                 let target_translation = self.shapes[target_id];
 
-                let (source_offset, source_edge_pos) = source;
-                let (target_offset, target_edge_pos) = target;
+                let (source_offset, source_edge) = source;
+                let (target_offset, target_edge) = target;
 
                 let source_pos = to_screen.transform_pos(source_translation + source_offset);
                 let target_pos = to_screen.transform_pos(target_translation + target_offset);
 
                 let connection: Connection = EdgePath {
-                    source: (glam::Vec2::new(source_pos.x, source_pos.y), source_edge_pos),
-                    target: (glam::Vec2::new(target_pos.x, target_pos.y), target_edge_pos),
+                    source: (glam::Vec2::new(source_pos.x, source_pos.y), source_edge),
+                    target: (glam::Vec2::new(target_pos.x, target_pos.y), target_edge),
                     edge_type,
                     ..Default::default()
                 }
