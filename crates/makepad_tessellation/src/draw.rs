@@ -1,4 +1,4 @@
-use makepad_widgets::{Cx2d, DrawLine, Vec2d, Vec4};
+use makepad_widgets::{Cx2d, DrawLine, Vec4, dvec2};
 
 use crate::vertex::VertexBuffers;
 
@@ -48,10 +48,10 @@ pub fn draw_with(
         let cv = vertices[c as usize];
         let dv = vertices[d as usize];
 
-        let ap = Vec2d { x: av.x, y: av.y };
-        let bp = Vec2d { x: bv.x, y: bv.y };
-        let cp = Vec2d { x: cv.x, y: cv.y };
-        let dp = Vec2d { x: dv.x, y: dv.y };
+        let ap = dvec2(av.x, av.y);
+        let bp = dvec2(bv.x, bv.y);
+        let cp = dvec2(cv.x, cv.y);
+        let dp = dvec2(dv.x, dv.y);
 
         draw_line.draw_line_abs(cx, ap, cp, color, width);
         draw_line.draw_line_abs(cx, bp, dp, color, width);
