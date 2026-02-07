@@ -96,7 +96,6 @@ core-text = "=21"
 
 # makepad
 makepad-widgets = { git = "https://github.com/makepad/makepad", branch = "dev", features = ["serde"] }
-makepad-vector = { git = "https://github.com/makepad/makepad", branch = "dev" }
 
 [workspace.lints]
 

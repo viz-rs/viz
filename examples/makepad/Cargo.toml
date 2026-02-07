@@ -8,7 +8,6 @@ makepad_flowkit.workspace = true
 makepad_tessellation.workspace = true
 
 makepad-widgets.workspace = true
-makepad-vector.workspace = true
 glam.workspace = true
 
 [[example]]
