@@ -218,7 +218,7 @@ impl Widget for FlowkitCanvas {
 
             let color = vec4(1.0, 0.0, 0.0, 1.0);
             let width = 2.0;
-            draw_with(cx, &mut self.draw_line, buffers, color, width);
+            self.draw_line.draw_with(cx, buffers, color, width);
         }
 
         cx.end_turtle();

@@ -4,7 +4,7 @@ mod utils;
 mod vertex;
 
 pub mod prelude {
-    pub use crate::draw::draw_with;
+    pub use crate::draw::DrawPath;
     pub use crate::mesh::{Mode, Tessellator};
     pub use crate::utils::Convert;
     pub use crate::vertex::VertexBuffers;

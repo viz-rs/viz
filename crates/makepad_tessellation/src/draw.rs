@@ -29,31 +29,31 @@ use crate::vertex::VertexBuffers;
 /// `a -> c`
 /// `b -> d`
 /// ```
-pub fn draw_with(
-    cx: &mut Cx2d,
-    draw_line: &mut DrawLine,
-    buffers: VertexBuffers,
-    color: Vec4,
-    width: f64,
-) {
-    let VertexBuffers { indices, vertices } = buffers;
+pub trait DrawPath {
+    fn draw_with(&mut self, cx: &mut Cx2d, buffers: VertexBuffers, color: Vec4, width: f64);
+}
 
-    for chunks in indices.chunks(6) {
-        let [d, c, a, _, _, b] = chunks[..] else {
-            break;
-        };
+impl DrawPath for DrawLine {
+    fn draw_with(&mut self, cx: &mut Cx2d, buffers: VertexBuffers, color: Vec4, width: f64) {
+        let VertexBuffers { indices, vertices } = buffers;
 
-        let av = vertices[a as usize];
-        let bv = vertices[b as usize];
-        let cv = vertices[c as usize];
-        let dv = vertices[d as usize];
+        for chunks in indices.chunks(6) {
+            let [d, c, a, _, _, b] = chunks[..] else {
+                break;
+            };
 
-        let ap = dvec2(av.x, av.y);
-        let bp = dvec2(bv.x, bv.y);
-        let cp = dvec2(cv.x, cv.y);
-        let dp = dvec2(dv.x, dv.y);
+            let av = vertices[a as usize];
+            let bv = vertices[b as usize];
+            let cv = vertices[c as usize];
+            let dv = vertices[d as usize];
 
-        draw_line.draw_line_abs(cx, ap, cp, color, width);
-        draw_line.draw_line_abs(cx, bp, dp, color, width);
+            let ap = dvec2(av.x, av.y);
+            let bp = dvec2(bv.x, bv.y);
+            let cp = dvec2(cv.x, cv.y);
+            let dp = dvec2(dv.x, dv.y);
+
+            self.draw_line_abs(cx, ap, cp, color, width);
+            self.draw_line_abs(cx, bp, dp, color, width);
+        }
     }
 }
