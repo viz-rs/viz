@@ -6,7 +6,7 @@ use makepad_widgets::Vec2d;
 use crate::utils::Convert;
 
 /// The index type of a mesh.
-type IndexType = u32;
+type IndexType = usize;
 /// Lyon's [`VertexBuffers`] generic data type defined for [`Point`].
 pub type VertexBuffers = tess::VertexBuffers<Vec2d, IndexType>;
 

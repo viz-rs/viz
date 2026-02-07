@@ -42,10 +42,10 @@ impl DrawPath for DrawLine {
                 break;
             };
 
-            let ap = vertices[a as usize];
-            let bp = vertices[b as usize];
-            let cp = vertices[c as usize];
-            let dp = vertices[d as usize];
+            let ap = vertices[a];
+            let bp = vertices[b];
+            let cp = vertices[c];
+            let dp = vertices[d];
 
             self.draw_line_abs(cx, ap, cp, color, width);
             self.draw_line_abs(cx, bp, dp, color, width);
