@@ -1,4 +1,4 @@
-use makepad_widgets::{Cx2d, DrawLine, Vec4, dvec2};
+use makepad_widgets::{Cx2d, DrawLine, Vec4};
 
 use crate::vertex::VertexBuffers;
 
@@ -42,15 +42,10 @@ impl DrawPath for DrawLine {
                 break;
             };
 
-            let av = vertices[a as usize];
-            let bv = vertices[b as usize];
-            let cv = vertices[c as usize];
-            let dv = vertices[d as usize];
-
-            let ap = dvec2(av.x, av.y);
-            let bp = dvec2(bv.x, bv.y);
-            let cp = dvec2(cv.x, cv.y);
-            let dp = dvec2(dv.x, dv.y);
+            let ap = vertices[a as usize];
+            let bp = vertices[b as usize];
+            let cp = vertices[c as usize];
+            let dp = vertices[d as usize];
 
             self.draw_line_abs(cx, ap, cp, color, width);
             self.draw_line_abs(cx, bp, dp, color, width);
