@@ -19,10 +19,10 @@ use crate::vertex::VertexBuffers;
 ///
 /// ----- | ------ | ----------- | -------
 /// index | indice |   vertex    | corner
-///   0   |   a    | vertices[a] | top-left
-///   1   |   b    | vertices[b] | top-right
-///   2   |   c    | vertices[c] | bottom-right
-///   3   |   d    | vertices[d] | bottom-left
+///  2|4  |   a    | vertices[a] | top-left
+///   5   |   b    | vertices[b] | top-right
+///   1   |   c    | vertices[c] | bottom-right
+///  0|3  |   d    | vertices[d] | bottom-left
 ///
 /// 2. Draws two lines:
 ///
