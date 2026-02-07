@@ -18,17 +18,9 @@ repository = "https://github.com/viz-rs/viz"
 version = "0.1.0"
 
 [workspace.dependencies]
-flowkit = { path = "crates/flowkit" }
-
-bevy_flowkit = { path = "crates/bevy_flowkit" }
 bevy_moon = { path = "crates/bevy_moon" }
 
-egui_flowkit = { path = "crates/egui_flowkit" }
-
-gpui_flowkit = { path = "crates/gpui_flowkit" }
-
-makepad_flowkit = { path = "crates/makepad_flowkit" }
-makepad_tessellation = { path = "crates/makepad_tessellation" }
+bevy_flowkit = { git = "git@github.com:viz-rs/flowkit.git" }
 
 # bevy
 bevy_a11y = { version = "0.18.0" }

@@ -8,46 +8,28 @@ Viz is a visual creative space.
 
 ## Libraries
 
-* [Flowkit](crates/flowkit): A universal UI workflow library.
-* [Bevy Flowkit](crates/bevy_flowkit): A UI workflow library for Bevy Engine.
-* [Bevy Moon](crates/bevy_moon): A world space UI for Bevy Engine.
+- [Flowkit](https://github.com/viz-rs/flowkit): A universal UI workflow library.
+- [Bevy Moon](crates/bevy_moon): A world space UI for Bevy Engine.
 
 ## Examples
 
-* [node based](examples/bevy/src/node_based.rs): A node-based UI example for Bevy Engine.
+- [node based](https://github.com/viz-rs/flowkit/examples/bevy/src/node_based.rs): A node-based UI example for Bevy Engine.
 
   ```console
   cargo run --example node_based
   ```
 
-* overflow: Overflow examples for Bevy Engine.
+- overflow: Overflow examples for Bevy Engine.
 
   ```console
   cargo run --example overflow
   cargo run --example overflow_debug
   ```
-* [text](examples/bevy/src/text.rs): A text UI example for Bevy Engine.
+
+- [text](examples/bevy/src/text.rs): A text UI example for Bevy Engine.
 
   ```console
   cargo run --example text
-  ```
-
-* [egui canvas](examples/egui/src/canvas.rs): A simple flow chat for egui.
-
-  ```console
-  cargo run --example egui_canvas
-  ```
-
-* [gpui canvas](examples/gpui/src/canvas.rs): A simple flow chat for gpui.
-
-  ```console
-  cargo run --example gpui_canvas
-  ```
-
-* [makepad canvas](examples/makepad/src/canvas.rs): A simple flow chat for makepad.
-
-  ```console
-  cargo run --example makepad_canvas
   ```
 
 ## License
@@ -55,5 +37,5 @@ Viz is a visual creative space.
 Viz is free, open source and permissively licensed!
 Except where noted (below and/or in individual files), all code in this repository is dual-licensed under either:
 
-* MIT License ([LICENSE-MIT](LICENSE-MIT) or [http://opensource.org/licenses/MIT](http://opensource.org/licenses/MIT))
-* Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0))
+- MIT License ([LICENSE-MIT](LICENSE-MIT) or [http://opensource.org/licenses/MIT](http://opensource.org/licenses/MIT))
+- Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0))
