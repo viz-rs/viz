@@ -20,7 +20,7 @@ version = "0.1.0"
 [workspace.dependencies]
 bevy_moon = { path = "crates/bevy_moon" }
 
-bevy_flowkit = { git = "git@github.com:viz-rs/flowkit.git" }
+bevy_flowkit = { git = "https://github.com/viz-rs/flowkit.git" }
 
 # bevy
 bevy_a11y = { version = "0.18.0" }
